@@ -152,6 +152,11 @@ export const sampleFormData = {
   customerSeal: '[SEAL AFFIXED - FINOLEX INDUSTRIES LTD]',
   customerDate: '2025-03-01',
 
+  // Site Commissioning Geo Selfie
+  geoTaggedSelfie: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 500 500' width='500' height='500'%3E%3Cdefs%3E%3ClinearGradient id='sky' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2338bdf8'/%3E%3Cstop offset='50%25' stop-color='%230284c7'/%3E%3Cstop offset='100%25' stop-color='%230f172a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='500' height='500' fill='url(%23sky)'/%3E%3Cpolygon points='40,300 200,230 320,230 460,300' fill='%231e293b' stroke='%2338bdf8' stroke-width='2'/%3E%3Cline x1='120' y1='265' x2='260' y2='265' stroke='%2338bdf8' stroke-width='1.5'/%3E%3Cline x1='240' y1='230' x2='280' y2='300' stroke='%2338bdf8' stroke-width='1.5'/%3E%3Ccircle cx='250' cy='190' r='55' fill='%23fed7aa'/%3E%3Crect x='195' y='130' width='110' height='32' rx='6' fill='%23ffffff' stroke='%230f172a' stroke-width='2'/%3E%3Ctext x='250' y='152' font-family='sans-serif' font-size='12' font-weight='bold' fill='%230f4c81' text-anchor='middle'%3ETATA POWER%3C/text%3E%3Cpath d='M160 380 Q250 260 340 380 Z' fill='%23ea580c' stroke='%23ffffff' stroke-width='3'/%3E%3Crect x='20' y='410' width='460' height='70' rx='8' fill='rgba(15, 23, 42, 0.88)' stroke='%2338bdf8' stroke-width='1.5'/%3E%3Ctext x='35' y='435' font-family='monospace' font-size='14' font-weight='bold' fill='%2338bdf8'%3E📍 GPS: 18.5204° N, 73.8567° E | MIDC Chakan II%3C/text%3E%3Ctext x='35' y='465' font-family='monospace' font-size='12.5' fill='%23f8fafc'%3E🕒 01-Mar-2025 11:42 AM IST • 150.50 KWp Commissioned%3C/text%3E%3C/svg%3E",
+  selfieGpsCoords: '18.5204° N, 73.8567° E (MIDC Chakan Phase II, Pune)',
+  selfieTimestamp: '01 Mar 2025, 11:42 AM IST',
+
   tataPowerSignatureName: 'Amitabh Sen (Lead Commissioning Engineer)',
   tataPowerSeal: '[SEAL AFFIXED - TATA POWER RENEWABLE ENERGY LTD]',
   tataPowerDate: '2025-03-01',

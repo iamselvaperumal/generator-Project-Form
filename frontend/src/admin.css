@@ -723,12 +723,33 @@
   gap: 6px;
   background: #1b69b3;
   color: #ffffff;
-  border: none;
-  padding: 6px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 7px 14px;
   border-radius: 6px;
   font-size: 12.5px;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-download-actual-pdf {
+  background: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+  border-color: #22c55e;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+}
+
+.btn-download-actual-pdf:hover {
+  background: linear-gradient(135deg, #15803d 0%, #166534 100%);
+}
+
+.btn-print-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: #e2e8f0;
+}
+
+.btn-print-secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
 }
 
 .btn-close-modal {
@@ -985,6 +1006,123 @@
 .banner-approve { background: #dcfce7; color: #14532d; }
 .banner-reject { background: #fee2e2; color: #7f1d1d; }
 .banner-reassign { background: #f3e8ff; color: #581c87; }
+
+/* Status Permanent Lock Visuals */
+.status-locked-permanent-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 16px;
+  animation: fadeIn 0.3s ease;
+}
+
+.locked-banner-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: #dcfce7;
+  color: #15803d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.locked-banner-text h4 {
+  margin: 0 0 3px 0;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #166534;
+}
+
+.locked-banner-text p {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: #15803d;
+}
+
+.status-option-card.disabled-locked {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: #f8fafc;
+  border-color: #e2e8f0;
+}
+
+.status-option-card.disabled-locked:hover {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.status-option-card.already-approved {
+  background: #f0fdf4;
+  border-color: #16a34a;
+  cursor: default;
+}
+
+.locked-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #15803d;
+  background: #dcfce7;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+.locked-pill-danger {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #991b1b;
+  background: #fee2e2;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+.locked-pill-warning {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  color: #854d0e;
+  background: #fef9c3;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: auto;
+}
+
+.btn-update-status.btn-locked {
+  background: #94a3b8;
+  cursor: not-allowed;
+  box-shadow: none;
+  opacity: 0.85;
+}
+
+.btn-update-status.btn-locked:hover {
+  background: #94a3b8;
+}
+
+.btn-sim-pill.disabled-sim {
+  opacity: 0.45;
+  cursor: not-allowed;
+  pointer-events: none;
+  border-color: #cbd5e1;
+  color: #94a3b8;
+  background: #f1f5f9;
+}
+
 
 /* =========================================================
    ADMIN PORTAL RESPONSIVE BREAKPOINTS (TABLET & MOBILE)

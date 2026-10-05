@@ -358,6 +358,13 @@ app.put('/api/applications/:id', async (req, res) => {
         return res.status(404).json({ error: 'Application not found' });
       }
 
+      // Enforce lock: Approved applications cannot be edited or resubmitted!
+      if (existing.status === 'Approved') {
+        return res.status(400).json({
+          error: 'This application has already been Approved and is permanently locked. It cannot be edited or resubmitted.'
+        });
+      }
+
       if (email) {
         const duplicate = await Application.findOne({
           contactPersonEmail: email,
@@ -409,6 +416,13 @@ app.put('/api/applications/:id', async (req, res) => {
 
       if (index === -1) {
         return res.status(404).json({ error: 'Application not found' });
+      }
+
+      // Enforce lock: Approved applications cannot be edited or resubmitted!
+      if (localDb.applications[index].status === 'Approved') {
+        return res.status(400).json({
+          error: 'This application has already been Approved and is permanently locked. It cannot be edited or resubmitted.'
+        });
       }
 
       if (email) {
@@ -469,35 +483,39 @@ app.patch('/api/applications/:id/status', async (req, res) => {
     const now = new Date();
 
     if (isMongoConnected) {
-      const doc = await Application.findOneAndUpdate(
-        { applicationId: { $regex: new RegExp(`^${cleanId}$`, 'i') } },
-        {
-          $set: {
-            status,
-            remarks: remarks.trim(),
-            updatedAt: now,
-            reviewedAt: now
-          }
-        },
-        { new: true }
-      );
+      const existingDoc = await Application.findOne({
+        applicationId: { $regex: new RegExp(`^${cleanId}$`, 'i') }
+      });
 
-      if (!doc) {
+      if (!existingDoc) {
         return res.status(404).json({ error: 'Application not found' });
       }
 
+      // Enforce lock: Once Approved, an application cannot be rejected or reassigned!
+      if (existingDoc.status === 'Approved') {
+        return res.status(400).json({
+          error: 'This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.'
+        });
+      }
+
+      existingDoc.status = status;
+      existingDoc.remarks = remarks.trim();
+      existingDoc.updatedAt = now;
+      existingDoc.reviewedAt = now;
+      await existingDoc.save();
+
       const updatedAppRecord = {
-        id: doc.applicationId,
-        applicationId: doc.applicationId,
-        customerName: doc.customerName,
-        contactPersonEmail: doc.contactPersonEmail,
-        submissionDate: doc.submissionDate,
-        submittedAt: doc.submittedAt,
-        updatedAt: doc.updatedAt,
-        status: doc.status,
-        remarks: doc.remarks,
-        formData: doc.formData,
-        uploadedFiles: doc.uploadedFiles
+        id: existingDoc.applicationId,
+        applicationId: existingDoc.applicationId,
+        customerName: existingDoc.customerName,
+        contactPersonEmail: existingDoc.contactPersonEmail,
+        submissionDate: existingDoc.submissionDate,
+        submittedAt: existingDoc.submittedAt,
+        updatedAt: existingDoc.updatedAt,
+        status: existingDoc.status,
+        remarks: existingDoc.remarks,
+        formData: existingDoc.formData,
+        uploadedFiles: existingDoc.uploadedFiles
       };
 
       return res.json({
@@ -514,6 +532,13 @@ app.patch('/api/applications/:id/status', async (req, res) => {
 
       if (index === -1) {
         return res.status(404).json({ error: 'Application not found' });
+      }
+
+      // Enforce lock: Once Approved, an application cannot be rejected or reassigned!
+      if (localDb.applications[index].status === 'Approved') {
+        return res.status(400).json({
+          error: 'This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.'
+        });
       }
 
       localDb.applications[index].status = status;

@@ -8,6 +8,7 @@ import { initialFormData, sampleFormData } from './data/initialData';
 import Page1 from './components/Page1';
 import Page2 from './components/Page2';
 import Page3 from './components/Page3';
+import Page4 from './components/Page4';
 import Navbar from './components/Navbar';
 import UploadSection from './components/UploadSection';
 import SubmissionSuccessModal from './components/SubmissionSuccessModal';
@@ -51,6 +52,7 @@ export default function App() {
   const [isPdfPreviewOpen, setIsPdfPreviewOpen] = useState(false);
   const [generatingPdf, setGeneratingPdf] = useState(false);
   const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [exportData, setExportData] = useState(null);
 
   // Instant Geo Selfie & Digital Signature Modal States
   const [isSignatureModalOpen, setIsSignatureModalOpen] = useState(false);
@@ -107,24 +109,20 @@ export default function App() {
 
   const handleDownloadFixedPdf = async (customData) => {
     setGeneratingPdf(true);
-    if (location.pathname !== '/form' && location.pathname !== '/') {
-      navigate('/form');
-    }
-    setIsExportingPdf(true);
+    const targetData = customData || formData;
+    setExportData(targetData);
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      // Allow brief moment for React to mount/update targetData in off-screen container
+      await new Promise((resolve) => setTimeout(resolve, 250));
 
-      const targetData = customData || formData;
-      const safeCustomer = (targetData.customerName || 'Certificate').replace(/[^a-zA-Z0-9]/g, '_');
+      const safeCustomer = (targetData.customerName || 'Certificate').replace(/[^a-zA-Z0-9_-]/g, '_');
       const filename = `TPRE_Certificate_${safeCustomer}_Fixed.pdf`;
-      await downloadFixedPdf(['page-1', 'page-2', 'page-3'], filename);
+      await downloadFixedPdf(['export-page-1', 'export-page-2', 'export-page-3', 'export-page-4'], filename);
     } catch (err) {
       console.error('Error generating PDF:', err);
-      alert('Generating direct PDF encountered an issue. Using browser vector print instead.');
-      window.print();
+      alert('Generating direct PDF encountered an issue: ' + err.message);
     } finally {
-      setIsExportingPdf(false);
       setGeneratingPdf(false);
     }
   };
@@ -340,6 +338,10 @@ export default function App() {
     let list = stored ? JSON.parse(stored) : [];
     const idx = list.findIndex(a => a.applicationId === appId);
     if (idx !== -1) {
+      if (list[idx].status === 'Approved') {
+        alert('This application has already been Approved and is permanently locked. It cannot be edited or resubmitted.');
+        return;
+      }
       list[idx] = {
         ...list[idx],
         formData,
@@ -371,6 +373,10 @@ export default function App() {
 
   // Callback from Status Tracker: "Edit & Resubmit Application"
   const handleEditAndResubmit = (app) => {
+    if (app.status === 'Approved') {
+      alert('This application has already been Approved and is permanently locked. It cannot be edited or resubmitted.');
+      return;
+    }
     if (app.formData) {
       setFormData(app.formData);
     }
@@ -421,6 +427,12 @@ export default function App() {
                 readOnly={isExportingPdf}
                 onOpenSignatureModal={() => setIsSignatureModalOpen(true)}
               />
+              <Page4
+                formData={formData}
+                onChange={handleFieldChange}
+                readOnly={isExportingPdf}
+                onOpenSelfieModal={() => setIsSelfieModalOpen(true)}
+              />
             </main>
           }
         />
@@ -434,6 +446,7 @@ export default function App() {
               <StatusTracker
                 currentAppId={statusSearchId}
                 onEditAndResubmit={handleEditAndResubmit}
+                onDownloadPdf={handleDownloadFixedPdf}
                 onPrintCertificate={handlePrint}
               />
             </main>
@@ -490,6 +503,7 @@ export default function App() {
         onClose={() => setIsSelfieModalOpen(false)}
         onSave={handleSaveSelfie}
         defaultGps={formData.latitudeLongitude}
+        plantLocation={formData.locationOfPlant || formData.customerAddress}
       />
 
       {/* Admin Review & Update Status Modal (Step 3 & 4) */}
@@ -500,6 +514,7 @@ export default function App() {
           onStatusUpdated={(updatedApp) => {
             setSelectedAppToReview(null);
           }}
+          onDownloadPdf={handleDownloadFixedPdf}
           onPrintCertificate={handlePrint}
         />
       )}
@@ -538,9 +553,35 @@ export default function App() {
       {generatingPdf && (
         <div className="pdf-toast-indicator">
           <div className="toast-spinner"></div>
-          <span>Generating 3-Page Fixed Layout PDF... Please wait a few seconds.</span>
+          <span>Generating 4-Page Fixed Layout PDF... Please wait a few seconds.</span>
         </div>
       )}
+
+      {/* Off-screen Isolated Container for Generating Real Fixed A4 PDF Anywhere (Admin, Status Tracker, Form) */}
+      <div
+        id="offscreen-pdf-export-root"
+        style={{
+          position: 'fixed',
+          left: '-99999px',
+          top: 0,
+          width: '210mm',
+          zIndex: -1,
+          pointerEvents: 'none'
+        }}
+      >
+        <div id="export-page-1">
+          <Page1 formData={exportData || formData} readOnly={true} />
+        </div>
+        <div id="export-page-2">
+          <Page2 formData={exportData || formData} readOnly={true} />
+        </div>
+        <div id="export-page-3">
+          <Page3 formData={exportData || formData} readOnly={true} />
+        </div>
+        <div id="export-page-4">
+          <Page4 formData={exportData || formData} readOnly={true} />
+        </div>
+      </div>
     </div>
   );
 }

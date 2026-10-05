@@ -3,6 +3,7 @@ import { Download, Printer, X, Eye, FileText, CheckCircle2, ZoomIn, ZoomOut, Spa
 import Page1 from './Page1';
 import Page2 from './Page2';
 import Page3 from './Page3';
+import Page4 from './Page4';
 
 export default function PdfPreviewModal({
   isOpen,
@@ -13,7 +14,7 @@ export default function PdfPreviewModal({
   downloading = false
 }) {
   const [zoomLevel, setZoomLevel] = useState(0.85); // Default comfortable 85% scale for desktop
-  const [activePageTab, setActivePageTab] = useState('all'); // 'all' | '1' | '2' | '3'
+  const [activePageTab, setActivePageTab] = useState('all'); // 'all' | '1' | '2' | '3' | '4'
 
   if (!isOpen) return null;
 
@@ -27,7 +28,7 @@ export default function PdfPreviewModal({
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
               <FileText size={20} color="#38bdf8" />
               <span style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
-                Actual Fixed Layout PDF Preview
+                Actual Fixed Layout PDF Preview (4 Pages)
               </span>
             </div>
           </div>
@@ -40,7 +41,7 @@ export default function PdfPreviewModal({
                 className={`page-pill ${activePageTab === 'all' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('all')}
               >
-                All 3 Pages
+                All 4 Pages
               </button>
               <button
                 type="button"
@@ -62,6 +63,13 @@ export default function PdfPreviewModal({
                 onClick={() => setActivePageTab('3')}
               >
                 Page 3 (Annexure-2)
+              </button>
+              <button
+                type="button"
+                className={`page-pill ${activePageTab === '4' ? 'active' : ''}`}
+                onClick={() => setActivePageTab('4')}
+              >
+                Page 4 (Site Photo)
               </button>
             </div>
 
@@ -143,6 +151,12 @@ export default function PdfPreviewModal({
             {(activePageTab === 'all' || activePageTab === '3') && (
               <div className="preview-page-container">
                 <Page3 formData={formData} onChange={() => {}} readOnly={true} />
+              </div>
+            )}
+
+            {(activePageTab === 'all' || activePageTab === '4') && (
+              <div className="preview-page-container">
+                <Page4 formData={formData} onChange={() => {}} readOnly={true} />
               </div>
             )}
           </div>

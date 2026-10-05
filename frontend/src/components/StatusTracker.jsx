@@ -13,12 +13,14 @@ import {
   Layers,
   ArrowRight,
   ShieldCheck,
-  RotateCcw
+  RotateCcw,
+  Download
 } from 'lucide-react';
 
 export default function StatusTracker({
   currentAppId = '',
   onEditAndResubmit,
+  onDownloadPdf,
   onPrintCertificate,
   onClose
 }) {
@@ -128,6 +130,13 @@ export default function StatusTracker({
   // Test Simulation helper to change status (Under Review, Reassigned, Approved, Rejected)
   const handleSimulateStatus = async (newStatus, customRemarks) => {
     if (!application) return;
+
+    // Irreversible lock: Once Approved, application cannot be rejected, reassigned, or reset!
+    if (application.status === 'Approved' && newStatus !== 'Approved') {
+      setError('This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.');
+      return;
+    }
+
     try {
       const res = await fetch(`/api/applications/${application.applicationId}/status`, {
         method: 'PATCH',
@@ -142,34 +151,41 @@ export default function StatusTracker({
         const data = await res.json();
         setApplication(data.application);
       } else {
-        // Fallback update
-        const updated = {
-          ...application,
-          status: newStatus,
-          remarks: customRemarks,
-          updatedAt: new Date().toISOString()
-        };
-        setApplication(updated);
-
-        // Update localStorage
-        const stored = localStorage.getItem('tpre_all_applications');
-        if (stored) {
-          const list = JSON.parse(stored);
-          const idx = list.findIndex(a => a.applicationId === application.applicationId);
-          if (idx !== -1) {
-            list[idx] = updated;
-            localStorage.setItem('tpre_all_applications', JSON.stringify(list));
-          }
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error) {
+          setError(errJson.error);
+        } else {
+          fallbackSimulateUpdate(newStatus, customRemarks);
         }
       }
     } catch (e) {
-      const updated = {
-        ...application,
-        status: newStatus,
-        remarks: customRemarks,
-        updatedAt: new Date().toISOString()
-      };
-      setApplication(updated);
+      fallbackSimulateUpdate(newStatus, customRemarks);
+    }
+  };
+
+  const fallbackSimulateUpdate = (newStatus, customRemarks) => {
+    if (application.status === 'Approved' && newStatus !== 'Approved') {
+      setError('This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.');
+      return;
+    }
+
+    const updated = {
+      ...application,
+      status: newStatus,
+      remarks: customRemarks,
+      updatedAt: new Date().toISOString()
+    };
+    setApplication(updated);
+
+    // Update localStorage
+    const stored = localStorage.getItem('tpre_all_applications');
+    if (stored) {
+      const list = JSON.parse(stored);
+      const idx = list.findIndex(a => a.applicationId === application.applicationId);
+      if (idx !== -1) {
+        list[idx] = updated;
+        localStorage.setItem('tpre_all_applications', JSON.stringify(list));
+      }
     }
   };
 
@@ -366,10 +382,11 @@ export default function StatusTracker({
                   <button
                     type="button"
                     className="btn-download-pdf-approved"
-                    onClick={() => onPrintCertificate(application.formData)}
+                    onClick={() => (onDownloadPdf ? onDownloadPdf(application.formData) : onPrintCertificate(application.formData))}
+                    title="Generate and Download Official 4-Page PDF Document"
                   >
-                    <Printer size={18} />
-                    <span>Download / Print Approved PDF</span>
+                    <Download size={18} />
+                    <span>Download Approved PDF (.pdf)</span>
                   </button>
                 </div>
               </div>
@@ -387,7 +404,7 @@ export default function StatusTracker({
                 <span>View / Print Certificate Document</span>
               </button>
 
-              {application.status !== 'Reassigned' && (
+              {application.status !== 'Reassigned' && application.status !== 'Approved' && (
                 <button
                   type="button"
                   className="btn-secondary"
@@ -401,23 +418,34 @@ export default function StatusTracker({
 
             {/* Interactive Admin Status Simulator (Convenient preview of workflow states) */}
             <div className="status-simulation-box">
-              <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, marginBottom: '6px', textTransform: 'uppercase' }}>
-                Interactive Workflow Simulator (Test all 4 lifecycle states):
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px', flexWrap: 'wrap', gap: '4px' }}>
+                <span style={{ fontSize: '11px', color: '#6b7280', fontWeight: 600, textTransform: 'uppercase' }}>
+                  Interactive Workflow Simulator:
+                </span>
+                {application.status === 'Approved' && (
+                  <span style={{ fontSize: '11px', color: '#15803d', fontWeight: 700, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <ShieldCheck size={13} /> Status Permanently Locked (Approved)
+                  </span>
+                )}
               </div>
               <div style={{ display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                 <button
                   type="button"
-                  className="btn-sim-pill sim-review"
+                  className={`btn-sim-pill sim-review ${application.status === 'Approved' ? 'disabled-sim' : ''}`}
+                  disabled={application.status === 'Approved'}
                   onClick={() => handleSimulateStatus('Under Review', 'Application is under technical review by Tata Power engineers.')}
+                  title={application.status === 'Approved' ? 'Cannot change status of an Approved application' : ''}
                 >
                   Set Under Review
                 </button>
                 <button
                   type="button"
-                  className="btn-sim-pill sim-reassign"
+                  className={`btn-sim-pill sim-reassign ${application.status === 'Approved' ? 'disabled-sim' : ''}`}
+                  disabled={application.status === 'Approved'}
                   onClick={() => handleSimulateStatus('Reassigned', 'Please update the Solar PCU serial numbers in Annexure-1 and re-check Input Voltage readings in Annexure-2.')}
+                  title={application.status === 'Approved' ? 'Cannot change status of an Approved application' : ''}
                 >
-                  Set Reassigned (Needs Edit)
+                  Set Reassigned
                 </button>
                 <button
                   type="button"
@@ -428,8 +456,10 @@ export default function StatusTracker({
                 </button>
                 <button
                   type="button"
-                  className="btn-sim-pill sim-reject"
+                  className={`btn-sim-pill sim-reject ${application.status === 'Approved' ? 'disabled-sim' : ''}`}
+                  disabled={application.status === 'Approved'}
                   onClick={() => handleSimulateStatus('Rejected', 'Grid parameters fail safety standards. Disapproved by Project Manager.')}
+                  title={application.status === 'Approved' ? 'Cannot change status of an Approved application' : ''}
                 >
                   Set Rejected
                 </button>

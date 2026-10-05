@@ -16,14 +16,55 @@ export default function Page1({
 
   return (
     <div className="a4-page" id="page-1">
+      {/* Top Right Selfie Widget: Only rendered in form filling mode (no-print), NOT in PDF */}
+      {!readOnly && (
+        <div className="p1-top-right-selfie-container no-print">
+          {formData.geoTaggedSelfie ? (
+            <div className="topright-selfie-card">
+              <div className="topright-selfie-meta">
+                <div className="topright-badge-tag">
+                  <Camera size={12} />
+                  <span>Site Selfie Captured</span>
+                </div>
+                <div className="topright-gps-text">
+                  📍 {formData.latitudeLongitude ? formData.latitudeLongitude.split(',')[0] : 'GPS Logged'}
+                </div>
+                <button
+                  type="button"
+                  className="btn-topright-retake"
+                  onClick={onOpenSelfieModal}
+                  title="Retake Geo Selfie"
+                >
+                  Retake Photo
+                </button>
+              </div>
+              <img
+                src={formData.geoTaggedSelfie}
+                alt="Site Commissioning Geo Selfie"
+                className="topright-selfie-img"
+                onClick={onOpenSelfieModal}
+                title="Click to view or retake photo"
+              />
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="btn-topright-capture"
+              onClick={onOpenSelfieModal}
+              title="Capture Geo-Tagged Site Commissioning Selfie"
+            >
+              <div className="btn-topright-text">
+                <span className="btn-topright-heading">Capture Geo Selfie</span>
+                <span className="btn-topright-desc">Rendered 500×500px on Page 4</span>
+              </div>
+              <Camera size={18} color="#0ea5e9" />
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="page-content">
-        <CommonHeader
-          showSelfieSlot={true}
-          geoTaggedSelfie={formData.geoTaggedSelfie}
-          latitudeLongitude={formData.latitudeLongitude}
-          readOnly={readOnly}
-          onOpenSelfieModal={onOpenSelfieModal}
-        />
+        <CommonHeader />
 
         <div className="p1-title">INSTALLATION & COMMISSIONING CERTIFICATE</div>
 

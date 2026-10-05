@@ -7,7 +7,7 @@ import { jsPDF } from 'jspdf';
  * to ensure 100% precision, zero clipping, exact A4 aspect ratio, and crisp typography.
  */
 export async function downloadFixedPdf(
-  pageIds = ['page-1', 'page-2', 'page-3'],
+  pageIds = ['page-1', 'page-2', 'page-3', 'page-4'],
   filename = 'TPRE_Installation_Commissioning_Certificate.pdf'
 ) {
   // Save current scroll position

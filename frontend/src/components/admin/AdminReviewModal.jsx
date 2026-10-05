@@ -12,17 +12,21 @@ import {
   ShieldCheck,
   AlertCircle,
   Paperclip,
-  Send
+  Send,
+  Lock,
+  Camera
 } from 'lucide-react';
 import Page1 from '../Page1';
 import Page2 from '../Page2';
 import Page3 from '../Page3';
+import Page4 from '../Page4';
 import '../../admin.css';
 
 export default function AdminReviewModal({
   application,
   onClose,
   onStatusUpdated,
+  onDownloadPdf,
   onPrintCertificate
 }) {
   const [activeTab, setActiveTab] = useState('formDetails'); // 'formDetails' | 'annexure1' | 'annexure2' | 'uploadedFiles'
@@ -45,8 +49,16 @@ export default function AdminReviewModal({
   const formData = application.formData || {};
   const uploadedFiles = application.uploadedFiles || [];
 
+  const isApproved = application?.status === 'Approved';
+
   const handleUpdateStatus = async (e) => {
     e.preventDefault();
+
+    if (isApproved) {
+      setError('This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.');
+      return;
+    }
+
     if (!remarks.trim()) {
       setError('Remarks are mandatory when updating status.');
       return;
@@ -73,8 +85,12 @@ export default function AdminReviewModal({
           onStatusUpdated(data.application);
         }, 800);
       } else {
-        // Fallback update in local state
-        fallbackLocalUpdate();
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error) {
+          setError(errJson.error);
+        } else {
+          fallbackLocalUpdate();
+        }
       }
     } catch (err) {
       console.warn('API error, saving to local applications:', err);
@@ -85,6 +101,11 @@ export default function AdminReviewModal({
   };
 
   const fallbackLocalUpdate = () => {
+    if (isApproved) {
+      setError('This application has already been Approved and is permanently locked. It cannot be rejected or reassigned.');
+      return;
+    }
+
     const updatedApp = {
       ...application,
       status: selectedStatus,
@@ -126,13 +147,23 @@ export default function AdminReviewModal({
           <div className="header-actions">
             <button
               type="button"
-              className="btn-print-admin-doc"
-              onClick={() => onPrintCertificate(formData)}
+              className="btn-print-admin-doc btn-download-actual-pdf"
+              onClick={() => (onDownloadPdf ? onDownloadPdf(formData) : onPrintCertificate(formData))}
+              title="Generate and Download Actual 4-Page PDF File"
             >
-              <Printer size={16} />
-              <span>Download / View PDF</span>
+              <Download size={16} />
+              <span>Download PDF</span>
             </button>
-            <button type="button" className="btn-close-modal" onClick={onClose}>
+            <button
+              type="button"
+              className="btn-print-admin-doc btn-print-secondary"
+              onClick={() => onPrintCertificate(formData)}
+              title="Browser Vector Print"
+            >
+              <Printer size={15} />
+              <span>Print</span>
+            </button>
+            <button type="button" className="btn-close-modal" onClick={onClose} title="Close Review">
               <X size={20} />
             </button>
           </div>
@@ -169,6 +200,14 @@ export default function AdminReviewModal({
               </button>
               <button
                 type="button"
+                className={`review-tab ${activeTab === 'sitePhoto' ? 'active' : ''}`}
+                onClick={() => setActiveTab('sitePhoto')}
+              >
+                <Camera size={16} />
+                <span>Site Photo (Page 4)</span>
+              </button>
+              <button
+                type="button"
                 className={`review-tab ${activeTab === 'uploadedFiles' ? 'active' : ''}`}
                 onClick={() => setActiveTab('uploadedFiles')}
               >
@@ -194,6 +233,12 @@ export default function AdminReviewModal({
               {activeTab === 'annexure2' && (
                 <div className="document-preview-wrapper">
                   <Page3 formData={formData} onChange={() => {}} readOnly={true} />
+                </div>
+              )}
+
+              {activeTab === 'sitePhoto' && (
+                <div className="document-preview-wrapper">
+                  <Page4 formData={formData} onChange={() => {}} readOnly={true} />
                 </div>
               )}
 
@@ -244,8 +289,26 @@ export default function AdminReviewModal({
               <div className="update-card-header">
                 <div className="step-badge">Step 4</div>
                 <h3 className="update-title">Update Status</h3>
-                <p className="update-subtitle">Approve, Reject or Reassign with remarks</p>
+                <p className="update-subtitle">
+                  {isApproved
+                    ? 'Status is permanently locked after approval'
+                    : 'Approve, Reject or Reassign with remarks'}
+                </p>
               </div>
+
+              {isApproved && (
+                <div className="status-locked-permanent-banner">
+                  <div className="locked-banner-icon">
+                    <Lock size={20} />
+                  </div>
+                  <div className="locked-banner-text">
+                    <h4>Status Permanently Locked</h4>
+                    <p>
+                      This application has already been <strong>Approved</strong>. Under Tata Power regulatory policy, an approved application cannot be rejected or reassigned.
+                    </p>
+                  </div>
+                </div>
+              )}
 
               {error && (
                 <div className="admin-alert admin-alert-error" style={{ marginBottom: '12px' }}>
@@ -268,14 +331,16 @@ export default function AdminReviewModal({
                   <label
                     className={`status-option-card option-approve ${
                       selectedStatus === 'Approved' ? 'selected' : ''
-                    }`}
+                    } ${isApproved ? 'already-approved' : ''}`}
                   >
                     <input
                       type="radio"
                       name="applicationStatus"
                       value="Approved"
                       checked={selectedStatus === 'Approved'}
+                      disabled={isApproved}
                       onChange={() => {
+                        if (isApproved) return;
                         setSelectedStatus('Approved');
                         setRemarks('All installation parameters verified and approved. Certificate formally commissioned.');
                       }}
@@ -284,6 +349,7 @@ export default function AdminReviewModal({
                       <div className="option-header">
                         <CheckCircle2 size={18} className="option-icon" />
                         <span className="option-label">Approve</span>
+                        {isApproved && <span className="locked-tag"><Lock size={12} /> Approved & Locked</span>}
                       </div>
                       <p className="option-desc">
                         Generate PDF with complete data and attachments. End user can download PDF.
@@ -295,14 +361,17 @@ export default function AdminReviewModal({
                   <label
                     className={`status-option-card option-reject ${
                       selectedStatus === 'Rejected' ? 'selected' : ''
-                    }`}
+                    } ${isApproved ? 'disabled-locked' : ''}`}
+                    title={isApproved ? 'Cannot reject an already approved application' : ''}
                   >
                     <input
                       type="radio"
                       name="applicationStatus"
                       value="Rejected"
                       checked={selectedStatus === 'Rejected'}
+                      disabled={isApproved}
                       onChange={() => {
+                        if (isApproved) return;
                         setSelectedStatus('Rejected');
                         setRemarks('Installation parameters fail Tata Power safety standards. Disapproved.');
                       }}
@@ -311,9 +380,12 @@ export default function AdminReviewModal({
                       <div className="option-header">
                         <XCircle size={18} className="option-icon" />
                         <span className="option-label">Reject</span>
+                        {isApproved && <span className="locked-pill-danger"><Lock size={12} /> Locked</span>}
                       </div>
                       <p className="option-desc">
-                        Add rejection remarks. Application closed.
+                        {isApproved
+                          ? 'Disabled: Once approved, an application cannot be rejected.'
+                          : 'Add rejection remarks. Application closed.'}
                       </p>
                     </div>
                   </label>
@@ -322,14 +394,17 @@ export default function AdminReviewModal({
                   <label
                     className={`status-option-card option-reassign ${
                       selectedStatus === 'Reassigned' ? 'selected' : ''
-                    }`}
+                    } ${isApproved ? 'disabled-locked' : ''}`}
+                    title={isApproved ? 'Cannot reassign an already approved application' : ''}
                   >
                     <input
                       type="radio"
                       name="applicationStatus"
                       value="Reassigned"
                       checked={selectedStatus === 'Reassigned'}
+                      disabled={isApproved}
                       onChange={() => {
+                        if (isApproved) return;
                         setSelectedStatus('Reassigned');
                         setRemarks('Please update the Solar PCU serial numbers in Annexure-1 and re-check Input Voltage readings in Annexure-2.');
                       }}
@@ -338,9 +413,12 @@ export default function AdminReviewModal({
                       <div className="option-header">
                         <RotateCcw size={18} className="option-icon" />
                         <span className="option-label">Reassign for Correction</span>
+                        {isApproved && <span className="locked-pill-warning"><Lock size={12} /> Locked</span>}
                       </div>
                       <p className="option-desc">
-                        Add remarks and send back to end user for edit & resubmit.
+                        {isApproved
+                          ? 'Disabled: Once approved, an application cannot be reassigned.'
+                          : 'Add remarks and send back to end user for edit & resubmit.'}
                       </p>
                     </div>
                   </label>
@@ -349,22 +427,30 @@ export default function AdminReviewModal({
                 {/* Mandatory Remarks Textarea */}
                 <div className="admin-input-group" style={{ marginTop: '16px' }}>
                   <label className="admin-label">
-                    Remarks <span>(Mandatory)</span>
+                    Remarks <span>{isApproved ? '(Finalized)' : '(Mandatory)'}</span>
                   </label>
                   <textarea
                     rows={4}
                     className="admin-textarea"
                     placeholder="Enter review remarks..."
                     value={remarks}
+                    disabled={isApproved}
                     onChange={(e) => setRemarks(e.target.value)}
                   />
                 </div>
 
-                {/* Submit Update Button */}
-                <button type="submit" className="btn-update-status" disabled={submitting}>
-                  <Send size={18} />
-                  <span>{submitting ? 'Updating Status...' : 'Update Status'}</span>
-                </button>
+                {/* Submit Update Button or Locked State Button */}
+                {isApproved ? (
+                  <button type="button" className="btn-update-status btn-locked" disabled>
+                    <Lock size={18} />
+                    <span>Status Locked (Permanently Approved)</span>
+                  </button>
+                ) : (
+                  <button type="submit" className="btn-update-status" disabled={submitting}>
+                    <Send size={18} />
+                    <span>{submitting ? 'Updating Status...' : 'Update Status'}</span>
+                  </button>
+                )}
               </form>
 
               {/* Status Outcome Banner */}

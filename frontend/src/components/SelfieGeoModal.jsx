@@ -1,13 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Camera, MapPin, Clock, X, Check, RefreshCw, AlertCircle, ShieldCheck, RotateCcw } from 'lucide-react';
+import { Camera, MapPin, Clock, X, Check, RefreshCw, AlertCircle, Edit2, RotateCcw, Globe, Compass } from 'lucide-react';
 
-export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '' }) {
+export default function SelfieGeoModal({
+  isOpen,
+  onClose,
+  onSave,
+  defaultGps = '',
+  plantLocation = ''
+}) {
   const [stream, setStream] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
-  const [gpsCoords, setGpsCoords] = useState(defaultGps || 'Fetching GPS Location...');
+  const [gpsCoords, setGpsCoords] = useState(defaultGps || 'Detecting real-time location...');
   const [timestamp, setTimestamp] = useState('');
   const [cameraError, setCameraError] = useState('');
   const [isGettingGps, setIsGettingGps] = useState(false);
+  const [gpsSource, setGpsSource] = useState('Detecting...');
+  const [isEditingGps, setIsEditingGps] = useState(false);
+  const [customGpsInput, setCustomGpsInput] = useState('');
 
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -19,6 +28,7 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
     } else {
       stopCamera();
       setCapturedImage(null);
+      setIsEditingGps(false);
     }
   }, [isOpen]);
 
@@ -34,7 +44,7 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
       }
     } catch (err) {
       console.warn('Camera permission or availability error:', err);
-      setCameraError('Camera access unavailable or blocked. You can upload a photo as fallback.');
+      setCameraError('Camera access unavailable or blocked. You can upload a photo file as fallback.');
     }
   };
 
@@ -45,41 +55,155 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
     }
   };
 
+  // Helper to format latitude/longitude with accurate hemisphere directions
+  const formatCoords = (lat, lng, city = '') => {
+    const latNum = parseFloat(lat);
+    const lngNum = parseFloat(lng);
+    if (isNaN(latNum) || isNaN(lngNum)) return '';
+    const latDir = latNum >= 0 ? 'N' : 'S';
+    const lngDir = lngNum >= 0 ? 'E' : 'W';
+    const base = `${Math.abs(latNum).toFixed(5)}° ${latDir}, ${Math.abs(lngNum).toFixed(5)}° ${lngDir}`;
+    return city ? `${base} • ${city}` : base;
+  };
+
+  // Fallback to real IP geolocation if browser GPS fails or times out
+  const fetchIpGeolocation = async () => {
+    try {
+      const res = await fetch('https://ipapi.co/json/');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.latitude && data.longitude) {
+          const cityInfo = [data.city, data.region_code || data.region].filter(Boolean).join(', ');
+          const formatted = formatCoords(data.latitude, data.longitude, cityInfo);
+          setGpsCoords(formatted);
+          setGpsSource('Network / IP Location');
+          setIsGettingGps(false);
+          return true;
+        }
+      }
+    } catch (err) {
+      console.warn('ipapi.co failed, trying ipwho.is:', err);
+    }
+
+    try {
+      const res2 = await fetch('https://ipwho.is/');
+      if (res2.ok) {
+        const data2 = await res2.json();
+        if (data2.latitude && data2.longitude) {
+          const cityInfo = [data2.city, data2.region_code || data2.region].filter(Boolean).join(', ');
+          const formatted = formatCoords(data2.latitude, data2.longitude, cityInfo);
+          setGpsCoords(formatted);
+          setGpsSource('Network / IP Location');
+          setIsGettingGps(false);
+          return true;
+        }
+      }
+    } catch (err2) {
+      console.warn('ipwho.is failed:', err2);
+    }
+
+    return false;
+  };
+
   const fetchGeoLocation = () => {
     setIsGettingGps(true);
+    setGpsSource('Detecting...');
+
     const now = new Date();
-    const formattedTime = now.toLocaleDateString('en-GB', {
-      day: '2-digit',
-      month: 'short',
-      year: 'numeric'
-    }) + ' ' + now.toLocaleTimeString('en-GB');
+    const formattedTime =
+      now.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+      }) + ' ' + now.toLocaleTimeString('en-GB');
 
     setTimestamp(formattedTime);
 
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const lat = position.coords.latitude.toFixed(4);
-          const lng = position.coords.longitude.toFixed(4);
-          const coordsText = `${lat}° N, ${lng}° E`;
-          setGpsCoords(coordsText);
-          setIsGettingGps(false);
-        },
-        (err) => {
-          console.warn('Geolocation error:', err);
-          if (!defaultGps) {
-            setGpsCoords('18.5204° N, 73.8567° E (Site Default)');
-          } else {
+    if (!navigator.geolocation) {
+      // Browser does not support geolocation, try IP fallback
+      fetchIpGeolocation().then((success) => {
+        if (!success) {
+          if (defaultGps) {
             setGpsCoords(defaultGps);
+            setGpsSource('Saved Form Location');
+          } else {
+            setGpsCoords('Location unavailable. Click Edit to enter.');
+            setGpsSource('Manual Required');
           }
           setIsGettingGps(false);
-        },
-        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-      );
-    } else {
-      setGpsCoords(defaultGps || '18.5204° N, 73.8567° E (GPS Ready)');
-      setIsGettingGps(false);
+        }
+      });
+      return;
     }
+
+    // Step 1: Try high accuracy first
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        const formatted = formatCoords(lat, lng);
+        setGpsCoords(formatted);
+        setGpsSource('Device High-Accuracy GPS');
+        setIsGettingGps(false);
+      },
+      (highAccErr) => {
+        console.warn('High accuracy geolocation timed out/failed, trying standard accuracy:', highAccErr);
+
+        // Step 2: Try standard accuracy with longer timeout and cache
+        navigator.geolocation.getCurrentPosition(
+          (stdPos) => {
+            const lat = stdPos.coords.latitude;
+            const lng = stdPos.coords.longitude;
+            const formatted = formatCoords(lat, lng);
+            setGpsCoords(formatted);
+            setGpsSource('Device Location (Standard)');
+            setIsGettingGps(false);
+          },
+          async (stdErr) => {
+            console.warn('Standard geolocation failed, falling back to IP detection:', stdErr);
+
+            // Step 3: Fallback to real IP geolocation service
+            const ipSuccess = await fetchIpGeolocation();
+            if (!ipSuccess) {
+              if (defaultGps) {
+                setGpsCoords(defaultGps);
+                setGpsSource('Saved Form Location');
+              } else if (plantLocation) {
+                setGpsCoords(`Site: ${plantLocation}`);
+                setGpsSource('Plant Address');
+              } else {
+                setGpsCoords('Location unavailable. Click ✏️ to enter.');
+                setGpsSource('Manual Required');
+              }
+              setIsGettingGps(false);
+            }
+          },
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 300000 }
+        );
+      },
+      { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+    );
+  };
+
+  const handleApplyCustomGps = () => {
+    if (!customGpsInput.trim()) {
+      alert('Please enter coordinates or site location.');
+      return;
+    }
+    setGpsCoords(customGpsInput.trim());
+    setGpsSource('Custom Verified');
+    setIsEditingGps(false);
+  };
+
+  const handleUsePlantLocation = () => {
+    if (!plantLocation && !defaultGps) {
+      alert('No plant address or coordinates found in the form.');
+      return;
+    }
+    const loc = defaultGps || plantLocation;
+    setGpsCoords(loc);
+    setGpsSource('Form Plant Address');
+    setIsEditingGps(false);
   };
 
   const takeSnapshot = () => {
@@ -110,12 +234,12 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
 
   const drawGeoTagOverlay = (ctx, width, height) => {
     // Gradient banner background
-    const bannerHeight = 85;
+    const bannerHeight = 88;
     const bannerY = height - bannerHeight;
 
     const gradient = ctx.createLinearGradient(0, bannerY, 0, height);
-    gradient.addColorStop(0, 'rgba(10, 15, 29, 0.75)');
-    gradient.addColorStop(1, 'rgba(10, 15, 29, 0.95)');
+    gradient.addColorStop(0, 'rgba(10, 15, 29, 0.82)');
+    gradient.addColorStop(1, 'rgba(10, 15, 29, 0.98)');
 
     ctx.fillStyle = gradient;
     ctx.fillRect(0, bannerY, width, bannerHeight);
@@ -124,18 +248,18 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
     ctx.fillStyle = '#38bdf8';
     ctx.fillRect(0, bannerY, width, 3);
 
-    // Text details
-    ctx.font = '700 15px "Plus Jakarta Sans", sans-serif';
+    // Clean text details
+    ctx.font = '700 14px "Plus Jakarta Sans", sans-serif';
     ctx.fillStyle = '#38bdf8';
-    ctx.fillText(`📍 GPS: ${gpsCoords}`, 18, bannerY + 28);
+    ctx.fillText(`📍 ${gpsCoords}`, 18, bannerY + 28);
 
-    ctx.font = '600 13.5px "Plus Jakarta Sans", sans-serif';
+    ctx.font = '600 13px "Plus Jakarta Sans", sans-serif';
     ctx.fillStyle = '#ffffff';
     ctx.fillText(`📅 ${timestamp || new Date().toLocaleString()}`, 18, bannerY + 52);
 
     ctx.font = '700 11px "JetBrains Mono", monospace';
     ctx.fillStyle = '#34d399';
-    ctx.fillText('⚡ TPREL VERIFIED SITE SELFIE', 18, bannerY + 72);
+    ctx.fillText(`⚡ TPREL VERIFIED SITE PHOTO • ${gpsSource.toUpperCase()}`, 18, bannerY + 74);
   };
 
   const handleFileUploadFallback = (e) => {
@@ -205,18 +329,80 @@ export default function SelfieGeoModal({ isOpen, onClose, onSave, defaultGps = '
 
         {/* Real-time GPS & Time Status Pill */}
         <div className="geo-status-banner">
-          <div className="geo-item">
-            <MapPin size={15} color="#38bdf8" />
-            <span>{gpsCoords}</span>
+          <div className="geo-item geo-item-coords" title={`Source: ${gpsSource}`}>
+            <MapPin size={16} color="#38bdf8" />
+            <div className="geo-text-wrap">
+              <span className="geo-coords-val">{gpsCoords}</span>
+              <span className="geo-source-tag">{gpsSource}</span>
+            </div>
           </div>
           <div className="geo-item">
             <Clock size={15} color="#34d399" />
             <span>{timestamp || 'Live Time'}</span>
           </div>
-          <button type="button" className="btn-refresh-gps" onClick={fetchGeoLocation} title="Refresh GPS">
-            <RefreshCw size={13} className={isGettingGps ? 'spin-icon' : ''} />
-          </button>
+
+          <div className="geo-actions-row">
+            <button
+              type="button"
+              className="btn-edit-gps-pill"
+              onClick={() => {
+                setCustomGpsInput(gpsCoords);
+                setIsEditingGps(!isEditingGps);
+              }}
+              title="Edit or adjust coordinates manually"
+            >
+              <Edit2 size={13} />
+              <span>{isEditingGps ? 'Cancel' : 'Edit'}</span>
+            </button>
+            <button
+              type="button"
+              className="btn-refresh-gps"
+              onClick={fetchGeoLocation}
+              disabled={isGettingGps}
+              title="Redetect real GPS location"
+            >
+              <RefreshCw size={14} className={isGettingGps ? 'spin-icon' : ''} />
+            </button>
+          </div>
         </div>
+
+        {/* Manual Location Edit Drawer */}
+        {isEditingGps && (
+          <div className="geo-edit-drawer">
+            <div className="geo-edit-title">
+              <Compass size={14} />
+              <span>Enter Exact Site Coordinates / Address:</span>
+            </div>
+            <div className="geo-edit-input-row">
+              <input
+                type="text"
+                className="geo-custom-input"
+                placeholder="e.g. 13.0827° N, 80.2707° E or Chennai Site"
+                value={customGpsInput}
+                onChange={(e) => setCustomGpsInput(e.target.value)}
+              />
+              <button
+                type="button"
+                className="btn-apply-custom-gps"
+                onClick={handleApplyCustomGps}
+              >
+                Apply
+              </button>
+            </div>
+            {(plantLocation || defaultGps) && (
+              <div className="geo-quick-presets">
+                <span className="preset-label">Quick Set:</span>
+                <button
+                  type="button"
+                  className="btn-preset-chip"
+                  onClick={handleUsePlantLocation}
+                >
+                  📍 Use Form Plant Address: {plantLocation || defaultGps}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Camera / Captured Image Container */}
         <div className="camera-view-container">
