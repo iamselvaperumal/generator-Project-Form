@@ -1,0 +1,1127 @@
+/* =========================================================
+   CERTIFICATE STYLING - EXACT 1:1 REPRODUCTION OF OG PDF
+   Single Source of Truth: "I & C(1).pdf"
+   ========================================================= */
+
+:root {
+  --tpre-blue: #1b69b3;
+  --doc-border: #000000;
+  --doc-font: 'Times New Roman', Times, 'Liberation Serif', serif;
+}
+
+/* Document Container */
+.document-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 40px 15px 100px 15px;
+  background: transparent;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Exact A4 Dimensions */
+.a4-page {
+  width: 210mm;
+  height: 297mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  background: #ffffff;
+  color: #000000;
+  font-family: var(--doc-font);
+  font-size: 10.5pt;
+  line-height: 1.2;
+  box-sizing: border-box;
+  padding: 12mm 15mm 10mm 15mm;
+  position: relative;
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7), 0 0 0 1px rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
+}
+
+.a4-page:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 32px 70px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(56, 189, 248, 0.3);
+}
+
+.page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* =========================================================
+   COMMON HEADER ON ALL 3 PAGES
+   ========================================================= */
+/* Top Right Corner Geo Selfie Box Positioner */
+.p1-header-relative-container {
+  position: relative;
+  width: 100%;
+}
+
+.corner-geo-selfie-box {
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  z-index: 10;
+}
+
+.selfie-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: #ffffff;
+  padding: 3px;
+  border: 1.5px solid #1b69b3;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 90px;
+}
+
+.selfie-badge-img {
+  width: 84px;
+  height: 84px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.selfie-mini-gps-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 6.5pt;
+  font-weight: 700;
+  color: #1b69b3;
+  text-align: center;
+  margin-top: 3px;
+  white-space: nowrap;
+  max-width: 84px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.btn-add-geo-selfie-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px dashed #0ea5e9;
+  color: #0284c7;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 8pt;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  box-shadow: 0 2px 6px rgba(14, 165, 233, 0.15);
+}
+
+.btn-add-geo-selfie-box:hover {
+  background: #0ea5e9;
+  color: #ffffff;
+}
+
+.btn-edit-selfie-pill {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  font-size: 7pt;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  z-index: 10;
+  transition: transform 0.15s ease;
+}
+
+.btn-edit-selfie-pill:hover {
+  transform: scale(1.08);
+}
+
+/* Digital Signature Slot Box (Bottom Left Corner) */
+.digital-sig-slot-box {
+  margin: 4px 0;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+}
+
+.sig-img-container {
+  position: relative;
+  display: inline-block;
+}
+
+.customer-digital-sig-img {
+  max-height: 44px;
+  max-width: 160px;
+  object-fit: contain;
+  display: block;
+}
+
+.btn-mini-sig-edit {
+  background: rgba(0, 0, 0, 0.05);
+  border: 1px solid #cbd5e1;
+  color: #1b69b3;
+  font-size: 7.5pt;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 2px;
+}
+
+.btn-add-digital-sig {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #eff6ff;
+  border: 1px dashed #1b69b3;
+  color: #1b69b3;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 8.5pt;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-digital-sig:hover {
+  background: #1b69b3;
+  color: #ffffff;
+}
+
+.doc-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.doc-brand-logo {
+  height: 42px;
+  width: auto;
+  max-width: 140px;
+  object-fit: contain;
+}
+
+.doc-header-text {
+  text-align: center;
+}
+
+.tata-brand-heading {
+  color: var(--tpre-blue);
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 19pt;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  margin: 0 0 1px 0;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+.tata-brand-address {
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  font-weight: 400;
+  color: #000000;
+  line-height: 1.25;
+  margin: 0;
+}
+
+/* Common Page Footer */
+.page-doc-footer {
+  margin-top: auto;
+  position: relative;
+  font-family: var(--doc-font);
+  font-size: 10pt;
+  color: #000000;
+  padding-top: 6px;
+}
+
+.page-doc-footer .page-number {
+  text-align: center;
+  font-size: 10.5pt;
+  margin: 0;
+  line-height: 1;
+}
+
+.page-doc-footer .copyright-text {
+  text-align: right;
+  font-size: 9.5pt;
+  font-family: var(--doc-font);
+  margin-top: -12px;
+}
+
+/* =========================================================
+   PAGE 1 SPECIFIC STYLES
+   ========================================================= */
+.p1-title {
+  text-align: center;
+  font-size: 11.5pt;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 2px 0 6px 0;
+  letter-spacing: 0.2px;
+}
+
+.p1-cert-paragraph {
+  font-size: 9.5pt;
+  font-weight: bold;
+  line-height: 1.3;
+  margin: 0 0 6px 0;
+  text-align: left;
+}
+
+/* Main Form Table */
+.cert-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--doc-border);
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  flex: 1;
+}
+
+.cert-table td {
+  border: 1px solid var(--doc-border);
+  padding: 4px 6px;
+  vertical-align: top;
+  box-sizing: border-box;
+}
+
+/* Page 1 Row Specifications - Full Page Vertical Distribution */
+.cell-split-50 {
+  width: 50%;
+  height: 32px;
+  vertical-align: middle !important;
+}
+
+.cell-full-width {
+  height: 32px;
+  vertical-align: middle !important;
+}
+
+.field-inline-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  min-height: 22px;
+}
+
+.field-label {
+  font-weight: normal;
+  flex-shrink: 0;
+  margin-right: 6px;
+  color: #000000;
+}
+
+.field-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-height: 22px;
+}
+
+/* Major Components */
+.mc-row-left {
+  width: 50%;
+  height: 125px;
+  padding: 6px 8px;
+}
+
+.mc-title {
+  font-weight: bold;
+  text-decoration: underline;
+  margin-bottom: 4px;
+}
+
+.mc-sub {
+  line-height: 1.35;
+}
+
+.mc-row-right {
+  width: 50%;
+  height: 125px;
+  padding: 6px 8px;
+}
+
+.mc-row-right ol {
+  margin: 2px 0 0 0;
+  padding-left: 18px;
+  line-height: 1.35;
+}
+
+/* Customer Information (Row 7 Alignment) */
+.cust-col-left,
+.cust-col-right {
+  padding: 0 !important;
+  vertical-align: top;
+  width: 50%;
+}
+
+.cust-block-top {
+  padding: 8px 10px;
+  min-height: 110px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.cust-col-right .cust-block-top {
+  justify-content: flex-start;
+}
+
+.cust-block-divider {
+  border-top: 1px solid #000000;
+  width: 100%;
+  margin: 0;
+}
+
+.cust-block-bottom {
+  padding: 8px 10px;
+  min-height: 75px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+.cust-col-right .cust-block-bottom {
+  justify-content: flex-start;
+}
+
+.cust-form-subblock {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cust-input-field {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.cust-field-tag {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 7.5pt;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: #1b69b3;
+  letter-spacing: 0.3px;
+  line-height: 1;
+}
+
+.cust-ui-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-family: var(--doc-font);
+  font-size: 9pt;
+  color: #0f172a;
+  outline: none;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.cust-ui-input:focus {
+  border-color: #1b69b3;
+  box-shadow: 0 0 0 2px rgba(27, 105, 179, 0.15);
+  background-color: #f8fafc;
+}
+
+.cust-ui-textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  border-radius: 3px;
+  padding: 3px 6px;
+  font-family: var(--doc-font);
+  font-size: 8.5pt;
+  color: #0f172a;
+  outline: none;
+  resize: none;
+  line-height: 1.25;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.cust-ui-textarea:focus {
+  border-color: #1b69b3;
+  box-shadow: 0 0 0 2px rgba(27, 105, 179, 0.15);
+  background-color: #f8fafc;
+}
+
+.cust-inline-grid {
+  display: flex;
+  gap: 6px;
+}
+
+.cust-form-divider {
+  border-top: 1px dashed #cbd5e1;
+  margin: 2px 0;
+}
+
+/* Exact Document PDF Display (readOnly = true) */
+.cust-pdf-display {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+  padding: 4px 6px;
+  box-sizing: border-box;
+}
+
+.cust-pdf-top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cust-pdf-name {
+  font-weight: bold;
+  font-size: 10.5pt;
+  color: #000000;
+  line-height: 1.25;
+}
+
+.cust-pdf-address {
+  font-size: 9.5pt;
+  color: #000000;
+  line-height: 1.3;
+  white-space: pre-wrap;
+}
+
+.cust-pdf-phone {
+  font-size: 9.5pt;
+  color: #000000;
+  line-height: 1.25;
+}
+
+.cust-pdf-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: auto;
+  padding-top: 6px;
+}
+
+.cust-pdf-contact-name {
+  font-weight: bold;
+  font-size: 10pt;
+  color: #000000;
+  line-height: 1.25;
+}
+
+.cust-pdf-contact-details {
+  font-size: 9.5pt;
+  color: #000000;
+  line-height: 1.25;
+}
+
+/* Trained O&M */
+.tom-row-left {
+  width: 50%;
+  height: 55px;
+  padding: 4px 6px;
+}
+
+.tom-row-right {
+  width: 50%;
+  height: 55px;
+  vertical-align: middle !important;
+  text-align: center;
+}
+
+/* Handover */
+.ho-row-left {
+  width: 50%;
+  height: 70px;
+  padding: 4px 6px;
+}
+
+.ho-row-left ol {
+  margin: 0;
+  padding-left: 16px;
+  line-height: 1.3;
+}
+
+.ho-row-right {
+  width: 50%;
+  height: 70px;
+  padding: 4px 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+/* Signatures */
+.sig-row-left,
+.sig-row-right {
+  width: 100%;
+  min-height: 155px;
+  height: auto;
+  padding: 6px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.sig-field-row {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3px;
+  width: 100%;
+}
+
+.sig-field-label {
+  flex-shrink: 0;
+  margin-right: 6px;
+  font-weight: normal;
+  font-size: 9.5pt;
+  color: #000000;
+}
+
+.sig-field-content {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================================
+   PAGE 2 SPECIFIC STYLES
+   ========================================================= */
+.p2-title {
+  text-align: center;
+  font-size: 11.5pt;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 2px 0 8px 0;
+}
+
+.p2-intro-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  font-size: 9.5pt;
+  line-height: 1.3;
+}
+
+.annexure-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--doc-border);
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  margin-bottom: 12px;
+}
+
+.annexure-table th,
+.annexure-table td {
+  border: 1px solid var(--doc-border);
+  padding: 5px 8px;
+  vertical-align: middle;
+  box-sizing: border-box;
+}
+
+.annexure-table th {
+  font-weight: normal;
+  text-align: center;
+  background-color: transparent;
+}
+
+.battery-serial-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--doc-border);
+  font-size: 9pt;
+}
+
+.battery-serial-table td {
+  border: 1px solid var(--doc-border);
+  width: 25%;
+  height: 32px;
+  padding: 2px 4px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+/* =========================================================
+   PAGE 3 SPECIFIC STYLES
+   ========================================================= */
+.p3-title-top {
+  text-align: center;
+  font-size: 11pt;
+  font-weight: normal;
+  margin: 0 0 4px 0;
+}
+
+.p3-handover-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 10px;
+}
+
+.p3-main-heading {
+  font-size: 11.5pt;
+  font-weight: bold;
+  text-decoration: underline;
+  margin: 0;
+}
+
+.p3-subheading {
+  font-size: 9.5pt;
+  font-weight: bold;
+  margin: 8px 0 4px 0;
+}
+
+.remarks-box {
+  border: 1px solid var(--doc-border);
+  padding: 8px 10px;
+  margin-top: 8px;
+  font-size: 9pt;
+  min-height: 85px;
+}
+
+.contractor-table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 1px solid var(--doc-border);
+  font-size: 9.5pt;
+  margin-top: 8px;
+}
+
+.contractor-table td {
+  border: 1px solid var(--doc-border);
+  padding: 8px 10px;
+  vertical-align: top;
+}
+
+/* =========================================================
+   DOC INPUTS & STATIC VALUE RENDERING
+   ========================================================= */
+/* Static Value in ReadOnly / PDF Mode (Prevents any text cut-off!) */
+.doc-static-value {
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  color: #000000;
+  line-height: 1.25;
+  white-space: pre-wrap;
+  word-break: normal;
+  overflow-wrap: break-word;
+  width: 100%;
+  display: inline-block;
+}
+
+/* Interactive Input in Edit Mode */
+.doc-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  color: #000000;
+  padding: 1px 2px;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.doc-input:focus {
+  background-color: #f0f7ff;
+}
+
+.doc-input-underline {
+  border-bottom: 1px dotted #888888;
+  transition: all 0.15s ease;
+}
+
+.doc-input-underline:hover {
+  border-bottom: 1px solid #1b69b3;
+  background-color: #f8fafc;
+}
+
+.doc-input-underline:focus {
+  border-bottom: 1.5px solid #1b69b3;
+  background-color: #eff6ff;
+}
+
+.doc-textarea {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--doc-font);
+  font-size: 9pt;
+  color: #000000;
+  resize: vertical;
+  line-height: 1.25;
+  padding: 1px 2px;
+  box-sizing: border-box;
+}
+
+/* Document Native Yes/No Toggle */
+.doc-yes-no-btn {
+  background: transparent;
+  border: none;
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+  cursor: pointer;
+  padding: 0 3px;
+  color: #000000;
+}
+
+.doc-yes-no-btn.selected {
+  font-weight: bold;
+  text-decoration: underline;
+  color: #000000;
+}
+
+.doc-yes-no-display {
+  font-family: var(--doc-font);
+  font-size: 9.5pt;
+}
+
+.doc-yes-no-display .selected {
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+/* System Type Option */
+.doc-system-type-wrap {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.doc-type-btn {
+  background: transparent;
+  border: 1px solid #cccccc;
+  border-radius: 3px;
+  font-family: var(--doc-font);
+  font-size: 9pt;
+  padding: 1px 8px;
+  cursor: pointer;
+}
+
+.doc-type-btn.selected {
+  background-color: #1b69b3;
+  color: #ffffff;
+  border-color: #1b69b3;
+  font-weight: bold;
+}
+
+/* Action Controls (Screen Only) */
+.table-action-bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 1px;
+  margin-bottom: 3px;
+}
+
+.btn-mini-action {
+  background: #f1f3f4;
+  border: 1px solid #dadce0;
+  border-radius: 3px;
+  font-size: 8pt;
+  padding: 1px 6px;
+  cursor: pointer;
+  color: #3c4043;
+  font-family: sans-serif;
+}
+
+.btn-mini-action:hover {
+  background: #e8f0fe;
+  color: #1a73e8;
+}
+
+/* =========================================================
+   PRINT MEDIA RULES - PERFECT A4 VECTOR PRINT
+   ========================================================= */
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  html, body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .no-print,
+  .app-navbar,
+  .status-checker-card,
+  .floating-action-bar,
+  .portal-header,
+  .btn-mini-action,
+  .table-action-bar,
+  .attachments-section,
+  .modal-overlay,
+  .status-badge-container,
+  .pdf-preview-backdrop {
+    display: none !important;
+  }
+
+  .document-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    gap: 0 !important;
+  }
+
+  .a4-page {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 12mm 15mm 10mm 15mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    page-break-before: always;
+    page-break-after: always;
+    break-after: page;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .a4-page:first-child {
+    page-break-before: avoid;
+  }
+
+  .doc-input,
+  .doc-textarea {
+    border: none !important;
+    background: transparent !important;
+  }
+
+  .doc-input-underline {
+    border-bottom: none !important;
+  }
+}
+
+/* =========================================================
+   FIXED PDF EXPORT MODE (FOR HTML2PDF JS GENERATION)
+   ========================================================= */
+.pdf-export-mode {
+  background: #ffffff !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: 210mm !important;
+}
+
+.pdf-export-mode .a4-page {
+  box-shadow: none !important;
+  margin: 0 !important;
+  border: none !important;
+  page-break-after: always !important;
+}
+
+.pdf-export-mode .doc-input,
+.pdf-export-mode .doc-textarea {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #000000 !important;
+}
+
+.pdf-export-mode .doc-input-underline {
+  border-bottom: none !important;
+}
+
+.pdf-export-mode .btn-mini-action,
+.pdf-export-mode .table-action-bar,
+.pdf-export-mode .no-print {
+  display: none !important;
+}
+
+/* =========================================================
+   COMMON DOCUMENT HEADER RESPONSIVE RULES
+   ========================================================= */
+.doc-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+}
+
+.doc-brand-logo-wrap {
+  height: 44px;
+  max-width: 180px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.doc-brand-logo {
+  height: 40px;
+  width: auto;
+  max-width: 170px;
+  object-fit: contain;
+  display: block;
+}
+
+/* =========================================================
+   SCREEN RESPONSIVE SCALING FOR TABLETS AND MOBILE DEVICES
+   (Only active on screen view; @media print remains 100% vector A4)
+   ========================================================= */
+@media screen and (max-width: 768px) {
+  .document-container {
+    padding: 10px 4px 60px 4px;
+    gap: 16px;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .a4-page {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: auto !important;
+    min-height: auto !important;
+    max-height: none !important;
+    padding: 10px 8px !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .cert-table,
+  .annexure-table,
+  .battery-serial-table,
+  .contractor-table {
+    width: 100% !important;
+    min-width: 100% !important;
+    max-width: 100% !important;
+    font-size: 8pt !important;
+    table-layout: fixed !important;
+    word-break: break-word;
+  }
+
+  .cert-table td,
+  .annexure-table td,
+  .contractor-table td {
+    padding: 3px 4px !important;
+  }
+
+  .field-inline-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+    height: auto;
+  }
+
+  .field-label {
+    font-size: 8pt;
+    margin-right: 0;
+  }
+
+  .field-content {
+    width: 100%;
+  }
+
+  .doc-input, .doc-textarea, .cust-ui-input, .cust-ui-textarea {
+    font-size: 8pt !important;
+    padding: 2px 4px !important;
+    width: 100% !important;
+  }
+
+  .doc-header-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: 4px !important;
+  }
+
+  .doc-brand-logo-wrap {
+    height: 32px !important;
+  }
+
+  .doc-brand-logo {
+    height: 30px !important;
+    max-width: 130px !important;
+  }
+
+  .tata-brand-heading {
+    font-size: 11pt !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+  }
+
+  .tata-brand-address {
+    font-size: 7.5pt !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+
+  .p1-title, .p2-title, .p3-main-heading {
+    font-size: 10pt !important;
+    margin: 4px 0 !important;
+  }
+
+  .p1-cert-paragraph {
+    font-size: 8pt !important;
+    line-height: 1.25 !important;
+  }
+
+  .cust-inline-grid {
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .p2-intro-row {
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .p2-intro-row > div {
+    width: 100% !important;
+  }
+
+  .mc-row-left, .mc-row-right {
+    height: auto !important;
+    min-height: 100px;
+  }
+
+  .cust-block-top, .cust-block-bottom {
+    min-height: auto !important;
+    padding: 6px 4px !important;
+  }
+
+  .tom-row-left, .tom-row-right, .ho-row-left, .ho-row-right {
+    height: auto !important;
+    padding: 4px !important;
+  }
+
+  .sig-row-left, .sig-row-right {
+    height: auto !important;
+    min-height: 110px !important;
+    padding: 4px !important;
+  }
+}
