@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import {
   Search,
+  Mail,
   CheckCircle2,
   Clock,
   AlertTriangle,
@@ -26,38 +27,40 @@ export default function StatusTracker({
 }) {
   const [searchParams] = useSearchParams();
   const queryId = searchParams.get('id');
+  const queryEmail = searchParams.get('email');
   
   const [searchId, setSearchId] = useState(currentAppId || queryId || '');
+  const [searchEmail, setSearchEmail] = useState(queryEmail || '');
   const [loading, setLoading] = useState(false);
   const [application, setApplication] = useState(null);
   const [error, setError] = useState('');
-  const [recentIds, setRecentIds] = useState([]);
 
-  // Load recent IDs
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem('tpre_recent_ids');
-      if (stored) {
-        setRecentIds(JSON.parse(stored));
-      }
-    } catch (e) {
-      // ignore
-    }
-  }, []);
-
-  // Fetch application if currentAppId or queryId passed
+  // Fetch application if currentAppId / queryId & queryEmail passed
   useEffect(() => {
     const targetId = currentAppId || queryId || '';
+    const targetEmail = queryEmail || searchEmail || '';
     if (targetId) {
       setSearchId(targetId);
-      fetchStatus(targetId);
+      if (targetEmail) {
+        setSearchEmail(targetEmail);
+        fetchStatus(targetId, targetEmail);
+      }
     }
-  }, [currentAppId, queryId]);
+  }, [currentAppId, queryId, queryEmail]);
 
-  const fetchStatus = async (idToSearch) => {
-    const targetId = (idToSearch || searchId).trim();
+  const fetchStatus = async (idToSearch, emailToSearch) => {
+    const targetId = (idToSearch !== undefined ? idToSearch : searchId).trim();
+    const targetEmail = (emailToSearch !== undefined ? emailToSearch : searchEmail).trim().toLowerCase();
+
     if (!targetId) {
       setError('Please enter a valid Application ID.');
+      setApplication(null);
+      return;
+    }
+
+    if (!targetEmail) {
+      setError('Please enter your registered Email ID.');
+      setApplication(null);
       return;
     }
 
@@ -66,23 +69,56 @@ export default function StatusTracker({
 
     try {
       // Try API first
-      const res = await fetch(`/api/applications/${targetId}`);
+      const res = await fetch(`/api/applications/${targetId}?email=${encodeURIComponent(targetEmail)}`);
       if (res.ok) {
         const data = await res.json();
-        setApplication(data.application);
-        saveRecentId(data.application.applicationId);
+        const appRecord = data.application;
+        const appEmail = (
+          appRecord.contactPersonEmail ||
+          appRecord.formData?.contactPersonEmail ||
+          appRecord.formData?.email ||
+          appRecord.email ||
+          ''
+        ).trim().toLowerCase();
+
+        if (appEmail && appEmail !== targetEmail) {
+          setError('Entered Email ID does not match. Please enter the correct email ID.');
+          setApplication(null);
+        } else {
+          setApplication(appRecord);
+        }
       } else {
+        const errJson = await res.json().catch(() => ({}));
+        if (errJson.error) {
+          setError(errJson.error);
+          setApplication(null);
+          setLoading(false);
+          return;
+        }
+
         // Fallback to localStorage if API unavailable
         const stored = localStorage.getItem('tpre_all_applications');
         if (stored) {
           const list = JSON.parse(stored);
           const found = list.find(
-            (a) => a.id.toLowerCase() === targetId.toLowerCase() ||
-                   a.applicationId.toLowerCase() === targetId.toLowerCase()
+            (a) => (a.id || '').toLowerCase() === targetId.toLowerCase() ||
+                   (a.applicationId || '').toLowerCase() === targetId.toLowerCase()
           );
           if (found) {
-            setApplication(found);
-            saveRecentId(found.applicationId);
+            const foundEmail = (
+              found.contactPersonEmail ||
+              found.formData?.contactPersonEmail ||
+              found.formData?.email ||
+              found.email ||
+              ''
+            ).trim().toLowerCase();
+
+            if (foundEmail && foundEmail !== targetEmail) {
+              setError('Entered Email ID does not match. Please enter the correct email ID.');
+              setApplication(null);
+            } else {
+              setApplication(found);
+            }
             setLoading(false);
             return;
           }
@@ -96,12 +132,24 @@ export default function StatusTracker({
       if (stored) {
         const list = JSON.parse(stored);
         const found = list.find(
-          (a) => a.id.toLowerCase() === targetId.toLowerCase() ||
-                 a.applicationId.toLowerCase() === targetId.toLowerCase()
+          (a) => (a.id || '').toLowerCase() === targetId.toLowerCase() ||
+                 (a.applicationId || '').toLowerCase() === targetId.toLowerCase()
         );
         if (found) {
-          setApplication(found);
-          saveRecentId(found.applicationId);
+          const foundEmail = (
+            found.contactPersonEmail ||
+            found.formData?.contactPersonEmail ||
+            found.formData?.email ||
+            found.email ||
+            ''
+          ).trim().toLowerCase();
+
+          if (foundEmail && foundEmail !== targetEmail) {
+            setError('Entered Email ID does not match. Please enter the correct email ID.');
+            setApplication(null);
+          } else {
+            setApplication(found);
+          }
           setLoading(false);
           return;
         }
@@ -110,20 +158,6 @@ export default function StatusTracker({
       setApplication(null);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const saveRecentId = (id) => {
-    try {
-      const stored = localStorage.getItem('tpre_recent_ids');
-      let list = stored ? JSON.parse(stored) : [];
-      if (!list.includes(id)) {
-        list = [id, ...list.slice(0, 4)];
-        localStorage.setItem('tpre_recent_ids', JSON.stringify(list));
-        setRecentIds(list);
-      }
-    } catch (e) {
-      // ignore
     }
   };
 
@@ -229,7 +263,7 @@ export default function StatusTracker({
               Check Application Status
             </h2>
             <p style={{ margin: 0, fontSize: '13px', color: '#6b7280' }}>
-              Enter your Application ID to track the verification and approval progress.
+              Enter your Application ID and registered Email ID to track verification progress.
             </p>
           </div>
           {onClose && (
@@ -247,40 +281,34 @@ export default function StatusTracker({
           }}
           className="search-form"
         >
-          <div className="search-input-group">
-            <Search size={20} className="search-icon" />
-            <input
-              type="text"
-              className="search-input"
-              placeholder="e.g. TPRE20250001"
-              value={searchId}
-              onChange={(e) => setSearchId(e.target.value.toUpperCase())}
-            />
-            <button type="submit" className="btn-search" disabled={loading}>
-              {loading ? 'Checking...' : 'Check Status'}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            <div className="search-input-group">
+              <Search size={20} className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Application ID (e.g. TPRE20260002)"
+                value={searchId}
+                onChange={(e) => setSearchId(e.target.value.toUpperCase())}
+              />
+            </div>
+
+            <div className="search-input-group">
+              <Mail size={20} className="search-icon" />
+              <input
+                type="email"
+                className="search-input"
+                placeholder="Registered Email ID (e.g. name@example.com)"
+                value={searchEmail}
+                onChange={(e) => setSearchEmail(e.target.value)}
+              />
+            </div>
+
+            <button type="submit" className="btn-search" style={{ borderRadius: '10px', width: '100%' }} disabled={loading}>
+              {loading ? 'Checking Status...' : 'Check Status'}
             </button>
           </div>
         </form>
-
-        {/* Recent IDs Quick Access */}
-        {recentIds.length > 0 && (
-          <div className="recent-ids-row">
-            <span style={{ fontSize: '12px', color: '#6b7280' }}>Recently Submitted:</span>
-            {recentIds.map((id) => (
-              <button
-                key={id}
-                type="button"
-                className="chip-id"
-                onClick={() => {
-                  setSearchId(id);
-                  fetchStatus(id);
-                }}
-              >
-                {id}
-              </button>
-            ))}
-          </div>
-        )}
 
         {/* Error message */}
         {error && (

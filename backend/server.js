@@ -292,6 +292,7 @@ app.post('/api/applications', async (req, res) => {
 app.get('/api/applications/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    const { email } = req.query;
     const cleanId = id.trim();
 
     let appRecord = null;
@@ -324,7 +325,21 @@ app.get('/api/applications/:id', async (req, res) => {
     }
 
     if (!appRecord) {
-      return res.status(404).json({ error: 'Application not found. Please verify the Application ID.' });
+      return res.status(404).json({ error: `No application found with ID "${cleanId}". Please verify the ID.` });
+    }
+
+    if (email) {
+      const queryEmail = email.trim().toLowerCase();
+      const recordEmail = (
+        appRecord.contactPersonEmail ||
+        appRecord.formData?.contactPersonEmail ||
+        appRecord.formData?.email ||
+        ''
+      ).trim().toLowerCase();
+
+      if (recordEmail && recordEmail !== queryEmail) {
+        return res.status(400).json({ error: 'Entered Email ID does not match. Please enter the correct email ID.' });
+      }
     }
 
     res.json({ success: true, application: appRecord });

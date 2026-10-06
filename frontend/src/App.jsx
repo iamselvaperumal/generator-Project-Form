@@ -534,7 +534,8 @@ export default function App() {
         applicationId={submittedAppId}
         onTrackStatus={(id) => {
           setStatusSearchId(id);
-          navigate(`/status?id=${id}`);
+          const email = formData.contactPersonEmail || '';
+          navigate(`/status?id=${id}&email=${encodeURIComponent(email)}`);
         }}
         onPrintCertificate={() => handlePrint()}
       />
