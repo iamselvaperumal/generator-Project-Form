@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Download, Printer, X, Eye, FileText, CheckCircle2, ZoomIn, ZoomOut, Sparkles } from 'lucide-react';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Download, Printer, X, FileText, ZoomIn, ZoomOut, Maximize2 } from 'lucide-react';
 import Page1 from './Page1';
 import Page2 from './Page2';
 import Page3 from './Page3';
@@ -13,63 +13,134 @@ export default function PdfPreviewModal({
   onPrintPdf,
   downloading = false
 }) {
-  const [zoomLevel, setZoomLevel] = useState(0.85); // Default comfortable 85% scale for desktop
+  const [zoomLevel, setZoomLevel] = useState(0.85); // Default 85% scale for desktop
   const [activePageTab, setActivePageTab] = useState('all'); // 'all' | '1' | '2' | '3' | '4'
 
+  // Standard A4 dimensions in pixels @ 96 DPI (210mm x 297mm)
+  const A4_WIDTH_PX = 794;
+  const A4_HEIGHT_PX = 1123;
+
+  // Calculate fit-to-screen scale for mobile screens
+  const calculateFitZoom = useCallback(() => {
+    if (typeof window === 'undefined') return 0.85;
+    const windowWidth = window.innerWidth;
+    if (windowWidth <= 768) {
+      // 16px total padding (8px on left, 8px on right)
+      const availableWidth = Math.max(280, windowWidth - 16);
+      const fitScale = Math.min(0.85, Math.max(0.2, availableWidth / A4_WIDTH_PX));
+      return Number(fitScale.toFixed(3));
+    }
+    return 0.85;
+  }, []);
+
+  // Auto-set initial zoom on open or window resize
+  useEffect(() => {
+    if (isOpen) {
+      setZoomLevel(calculateFitZoom());
+
+      const handleResize = () => {
+        setZoomLevel(calculateFitZoom());
+      };
+
+      window.addEventListener('resize', handleResize);
+      return () => window.removeEventListener('resize', handleResize);
+    }
+  }, [isOpen, calculateFitZoom]);
+
   if (!isOpen) return null;
+
+  const handleResetFit = () => {
+    setZoomLevel(calculateFitZoom());
+  };
+
+  const scaledWidth = Math.round(A4_WIDTH_PX * zoomLevel);
+  const scaledHeight = Math.round(A4_HEIGHT_PX * zoomLevel);
+
+  const renderScaledPage = (PageComponent, pageId) => (
+    <div
+      key={pageId}
+      className="preview-page-container"
+      style={{
+        width: `${scaledWidth}px`,
+        height: `${scaledHeight}px`,
+        position: 'relative',
+        overflow: 'hidden',
+        flexShrink: 0
+      }}
+    >
+      <div
+        style={{
+          width: `${A4_WIDTH_PX}px`,
+          height: `${A4_HEIGHT_PX}px`,
+          transform: `scale(${zoomLevel})`,
+          transformOrigin: 'top left',
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
+      >
+        <PageComponent formData={formData} onChange={() => {}} readOnly={true} />
+      </div>
+    </div>
+  );
 
   return (
     <div className="pdf-preview-backdrop no-print">
       <div className="pdf-preview-window">
         {/* Header Bar */}
         <div className="pdf-preview-topbar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div className="pdf-topbar-brand">
             <div className="dev-tag">DEV / TEST MODE</div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-              <FileText size={20} color="#38bdf8" />
-              <span style={{ fontSize: '15px', fontWeight: 700, color: '#ffffff' }}>
+            <div className="pdf-title-group">
+              <FileText size={16} color="#38bdf8" />
+              <span className="pdf-title-text">
                 Actual Fixed Layout PDF Preview (4 Pages)
               </span>
             </div>
           </div>
 
-          {/* Quick Page Jump & Zoom Controls */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {/* Controls (Page switcher & Zoom) */}
+          <div className="pdf-topbar-controls">
             <div className="page-switcher-pills">
               <button
                 type="button"
                 className={`page-pill ${activePageTab === 'all' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('all')}
               >
-                All 4 Pages
+                <span className="pill-full">All 4 Pages</span>
+                <span className="pill-short">All</span>
               </button>
               <button
                 type="button"
                 className={`page-pill ${activePageTab === '1' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('1')}
               >
-                Page 1
+                <span className="pill-full">Page 1</span>
+                <span className="pill-short">P1</span>
               </button>
               <button
                 type="button"
                 className={`page-pill ${activePageTab === '2' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('2')}
               >
-                Page 2 (Annexure-1)
+                <span className="pill-full">Page 2 (Annexure-1)</span>
+                <span className="pill-short">P2</span>
               </button>
               <button
                 type="button"
                 className={`page-pill ${activePageTab === '3' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('3')}
               >
-                Page 3 (Annexure-2)
+                <span className="pill-full">Page 3 (Annexure-2)</span>
+                <span className="pill-short">P3</span>
               </button>
               <button
                 type="button"
                 className={`page-pill ${activePageTab === '4' ? 'active' : ''}`}
                 onClick={() => setActivePageTab('4')}
               >
-                Page 4 (Site Photo)
+                <span className="pill-full">Page 4 (Site Photo)</span>
+                <span className="pill-short">P4</span>
               </button>
             </div>
 
@@ -77,91 +148,102 @@ export default function PdfPreviewModal({
               <button
                 type="button"
                 className="btn-zoom"
-                onClick={() => setZoomLevel((z) => Math.max(0.5, z - 0.1))}
+                onClick={() => setZoomLevel((z) => Math.max(0.2, Number((z - 0.05).toFixed(3))))}
                 title="Zoom Out"
               >
-                <ZoomOut size={16} />
+                <ZoomOut size={15} />
               </button>
-              <span style={{ fontSize: '12px', color: '#94a3b8', minWidth: '40px', textAlign: 'center' }}>
+              <span className="zoom-val-text">
                 {Math.round(zoomLevel * 100)}%
               </span>
               <button
                 type="button"
                 className="btn-zoom"
-                onClick={() => setZoomLevel((z) => Math.min(1.2, z + 0.1))}
+                onClick={() => setZoomLevel((z) => Math.min(1.5, Number((z + 0.05).toFixed(3))))}
                 title="Zoom In"
               >
-                <ZoomIn size={16} />
+                <ZoomIn size={15} />
+              </button>
+              <button
+                type="button"
+                className="btn-zoom btn-zoom-fit"
+                onClick={handleResetFit}
+                title="Fit to Screen"
+              >
+                <Maximize2 size={12} style={{ marginRight: '2px' }} /> Fit
               </button>
             </div>
 
-            {/* Actions: Download & Print */}
-            <button
-              type="button"
-              className="btn-modal-download"
-              onClick={onDownloadPdf}
-              disabled={downloading}
-            >
-              <Download size={16} />
-              <span>{downloading ? 'Generating PDF...' : 'Download Fixed PDF (.pdf)'}</span>
-            </button>
+            {/* Desktop Actions */}
+            <div className="pdf-topbar-actions-desktop">
+              <button
+                type="button"
+                className="btn-modal-download"
+                onClick={onDownloadPdf}
+                disabled={downloading}
+              >
+                <Download size={16} />
+                <span>{downloading ? 'Generating PDF...' : 'Download Fixed PDF (.pdf)'}</span>
+              </button>
 
-            <button
-              type="button"
-              className="btn-modal-print"
-              onClick={onPrintPdf}
-              title="Browser Vector Print / Save as PDF"
-            >
-              <Printer size={16} />
-              <span>Print / Vector PDF</span>
-            </button>
-
-            <button type="button" className="btn-modal-close" onClick={onClose} title="Close Preview">
-              <X size={20} />
-            </button>
+              <button
+                type="button"
+                className="btn-modal-print"
+                onClick={onPrintPdf}
+                title="Browser Vector Print / Save as PDF"
+              >
+                <Printer size={16} />
+                <span>Print / Vector PDF</span>
+              </button>
+            </div>
           </div>
+
+          {/* Close Button */}
+          <button type="button" className="btn-modal-close" onClick={onClose} title="Close Preview">
+            <X size={20} />
+          </button>
         </div>
 
         {/* Info banner */}
         <div className="preview-info-banner">
           <span>
-            ℹ️ <strong>Test & Development View:</strong> This renders your filled data directly into the exact fixed A4 layout matching <strong>"I & C(1).pdf"</strong> without interactive web controls. Click <strong>"Download Fixed PDF"</strong> to save the generated PDF file directly.
+            ℹ️ <strong>Test & Development View:</strong> Fixed A4 layout matching <strong>"I & C(1).pdf"</strong>. Click <strong>"Download Fixed PDF"</strong> to save.
           </span>
         </div>
 
         {/* Document Scroll Canvas */}
         <div className="pdf-preview-scroll-area">
-          <div
-            id="pdf-preview-document"
-            className="pdf-preview-scaled-wrap"
-            style={{ transform: `scale(${zoomLevel})`, transformOrigin: 'top center' }}
-          >
-            {(activePageTab === 'all' || activePageTab === '1') && (
-              <div className="preview-page-container">
-                <Page1 formData={formData} onChange={() => {}} readOnly={true} />
-              </div>
-            )}
-
-            {(activePageTab === 'all' || activePageTab === '2') && (
-              <div className="preview-page-container">
-                <Page2 formData={formData} onChange={() => {}} readOnly={true} />
-              </div>
-            )}
-
-            {(activePageTab === 'all' || activePageTab === '3') && (
-              <div className="preview-page-container">
-                <Page3 formData={formData} onChange={() => {}} readOnly={true} />
-              </div>
-            )}
-
-            {(activePageTab === 'all' || activePageTab === '4') && (
-              <div className="preview-page-container">
-                <Page4 formData={formData} onChange={() => {}} readOnly={true} />
-              </div>
-            )}
+          <div id="pdf-preview-document" className="pdf-preview-scaled-wrap">
+            {(activePageTab === 'all' || activePageTab === '1') && renderScaledPage(Page1, 'p1')}
+            {(activePageTab === 'all' || activePageTab === '2') && renderScaledPage(Page2, 'p2')}
+            {(activePageTab === 'all' || activePageTab === '3') && renderScaledPage(Page3, 'p3')}
+            {(activePageTab === 'all' || activePageTab === '4') && renderScaledPage(Page4, 'p4')}
           </div>
+        </div>
+
+        {/* Mobile Sticky Action Bar */}
+        <div className="pdf-preview-mobile-actions">
+          <button
+            type="button"
+            className="btn-modal-download btn-mobile-download"
+            onClick={onDownloadPdf}
+            disabled={downloading}
+          >
+            <Download size={18} />
+            <span>{downloading ? 'Generating PDF...' : 'Download Fixed PDF (.pdf)'}</span>
+          </button>
+
+          <button
+            type="button"
+            className="btn-modal-print btn-mobile-print"
+            onClick={onPrintPdf}
+            title="Browser Vector Print / Save as PDF"
+          >
+            <Printer size={18} />
+          </button>
         </div>
       </div>
     </div>
   );
 }
+

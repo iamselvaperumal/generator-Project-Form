@@ -940,7 +940,36 @@ body {
   color: #ffffff;
   flex-shrink: 0;
   gap: 16px;
-  flex-wrap: wrap;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.pdf-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.pdf-title-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pdf-title-text {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: #ffffff;
+  white-space: nowrap;
+}
+
+.pdf-topbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  justify-content: flex-end;
 }
 
 .dev-tag {
@@ -960,6 +989,13 @@ body {
   padding: 3px;
   border-radius: 6px;
   gap: 2px;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+.page-switcher-pills::-webkit-scrollbar {
+  display: none;
 }
 
 .page-pill {
@@ -971,7 +1007,16 @@ body {
   font-weight: 600;
   border-radius: 4px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.15s ease;
+}
+
+.pill-full {
+  display: inline;
+}
+
+.pill-short {
+  display: none;
 }
 
 .page-pill:hover {
@@ -990,6 +1035,14 @@ body {
   padding: 3px 6px;
   border-radius: 6px;
   gap: 4px;
+  flex-shrink: 0;
+}
+
+.zoom-val-text {
+  font-size: 12px;
+  color: #94a3b8;
+  min-width: 38px;
+  text-align: center;
 }
 
 .btn-zoom {
@@ -1007,6 +1060,32 @@ body {
 .btn-zoom:hover {
   background-color: #334155;
   color: #ffffff;
+}
+
+.btn-zoom-fit {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 7px;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  border-radius: 4px;
+  background: rgba(56, 189, 248, 0.1);
+  margin-left: 2px;
+}
+
+.btn-zoom-fit:hover {
+  background: rgba(56, 189, 248, 0.25);
+  color: #ffffff;
+}
+
+.pdf-topbar-actions-desktop {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 }
 
 .btn-modal-download {
@@ -1057,6 +1136,7 @@ body {
   align-items: center;
   justify-content: center;
   border-radius: 4px;
+  flex-shrink: 0;
 }
 
 .btn-modal-close:hover {
@@ -1079,6 +1159,7 @@ body {
   display: flex;
   justify-content: center;
   background-color: #525659;
+  -webkit-overflow-scrolling: touch;
 }
 
 .pdf-preview-scaled-wrap {
@@ -1087,6 +1168,10 @@ body {
   align-items: center;
   gap: 25px;
   transition: transform 0.15s ease-out;
+}
+
+.pdf-preview-mobile-actions {
+  display: none;
 }
 
 .preview-page-container {
@@ -1353,13 +1438,143 @@ body {
   .pdf-preview-topbar {
     flex-direction: column;
     align-items: stretch;
-    gap: 10px;
-    padding: 10px 14px;
+    gap: 8px;
+    padding: 10px 12px;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
   }
 
-  .page-switcher-pills, .zoom-controls {
-    justify-content: center;
+  .pdf-topbar-brand {
     width: 100%;
+    justify-content: flex-start;
+    padding-right: 36px;
+    box-sizing: border-box;
+  }
+
+  .pdf-title-text {
+    font-size: 12.5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: calc(100vw - 150px);
+  }
+
+  .btn-modal-close {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    z-index: 20;
+    padding: 6px;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 50%;
+  }
+
+  .pdf-topbar-controls {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    width: 100%;
+  }
+
+  .page-switcher-pills {
+    flex: 1;
+    display: flex;
+    justify-content: space-around;
+    padding: 2px;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .page-pill {
+    flex: 1;
+    text-align: center;
+    padding: 5px 2px;
+    font-size: 11px;
+    border-radius: 4px;
+  }
+
+  .pill-full {
+    display: none !important;
+  }
+
+  .pill-short {
+    display: inline !important;
+    font-weight: 700;
+  }
+
+  .zoom-controls {
+    justify-content: center;
+    width: auto;
+    padding: 3px 6px;
+    gap: 2px;
+    flex-shrink: 0;
+  }
+
+  .zoom-val-text {
+    font-size: 11px;
+    min-width: 30px;
+  }
+
+  .pdf-topbar-actions-desktop {
+    display: none !important;
+  }
+
+  .preview-info-banner {
+    padding: 6px 12px;
+    font-size: 11px;
+    text-align: center;
+    line-height: 1.35;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .pdf-preview-scroll-area {
+    padding: 12px 4px 85px 4px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+
+  .pdf-preview-scaled-wrap {
+    margin: 0 auto;
+    align-items: center;
+    max-width: 100% !important;
+  }
+
+  .pdf-preview-mobile-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-top: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 10px 14px;
+    z-index: 2600;
+    box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.6);
+  }
+
+  .btn-mobile-download {
+    flex: 1;
+    justify-content: center;
+    padding: 11px 16px !important;
+    font-size: 13.5px !important;
+    font-weight: 700 !important;
+    border-radius: 8px !important;
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 4px 14px rgba(5, 150, 105, 0.4) !important;
+  }
+
+  .btn-mobile-print {
+    padding: 11px 14px !important;
+    border-radius: 8px !important;
   }
 
   .reassign-banner-strip {
@@ -2188,5 +2403,60 @@ body {
     gap: 8px !important;
   }
 }
+
+/* =========================================================
+   EXACT A4 PAGE PRESERVATION INSIDE PDF PREVIEW MODAL
+   ========================================================= */
+.pdf-preview-window .a4-page {
+  width: 210mm !important;
+  height: 297mm !important;
+  min-height: 297mm !important;
+  max-height: 297mm !important;
+  padding: 12mm 15mm 10mm 15mm !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+  border-radius: 2px !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45) !important;
+  margin: 0 !important;
+}
+
+.pdf-preview-window .cert-table,
+.pdf-preview-window .annexure-table,
+.pdf-preview-window .battery-serial-table,
+.pdf-preview-window .contractor-table,
+.pdf-preview-window .p4-metadata-table {
+  width: 100% !important;
+  min-width: 0 !important;
+}
+
+.pdf-preview-window .doc-header-inner {
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 16px !important;
+}
+
+.pdf-preview-window .field-inline-row {
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.pdf-preview-window .field-label {
+  font-size: 9.5pt !important;
+  font-weight: normal !important;
+  margin-right: 6px !important;
+}
+
+.pdf-preview-window .doc-input,
+.pdf-preview-window .doc-textarea,
+.pdf-preview-window .cust-ui-input,
+.pdf-preview-window .cust-ui-textarea {
+  font-size: 9.5pt !important;
+  padding: 1px 2px !important;
+  min-height: auto !important;
+}
+
 
 
