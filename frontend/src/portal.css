@@ -2092,3 +2092,58 @@ body {
   cursor: pointer;
 }
 
+/* =========================================================
+   ADDITIONAL MOBILE RESPONSIVE MEDIA QUERIES (< 680px)
+   ========================================================= */
+@media (max-width: 680px) {
+  .signature-modal-card,
+  .selfie-modal-card {
+    padding: 16px 14px !important;
+    border-radius: 14px !important;
+    width: 95vw !important;
+    max-width: 95vw !important;
+    margin: 10px auto !important;
+    box-sizing: border-box !important;
+  }
+
+  .canvas-wrapper {
+    height: 180px !important;
+  }
+
+  .canvas-controls-bar {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+
+  .control-group {
+    justify-content: space-between !important;
+    width: 100% !important;
+  }
+
+  .btn-clear-canvas {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .sig-modal-footer {
+    flex-direction: column-reverse !important;
+    gap: 8px !important;
+  }
+
+  .btn-cancel-sig, .btn-save-sig {
+    width: 100% !important;
+    justify-content: center !important;
+  }
+
+  .camera-feed-box {
+    height: 260px !important;
+  }
+
+  .selfie-gps-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+}
+
+

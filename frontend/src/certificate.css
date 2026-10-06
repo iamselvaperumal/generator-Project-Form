@@ -989,6 +989,14 @@
    SCREEN RESPONSIVE SCALING FOR TABLETS AND MOBILE DEVICES
    (Only active on screen view; @media print remains 100% vector A4)
    ========================================================= */
+/* Responsive Table Horizontal Scroll Wrapper */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-bottom: 8px;
+}
+
 @media screen and (max-width: 768px) {
   .document-container {
     padding: 10px 4px 60px 4px;
@@ -1004,41 +1012,52 @@
     height: auto !important;
     min-height: auto !important;
     max-height: none !important;
-    padding: 10px 8px !important;
+    padding: 12px 10px !important;
     box-sizing: border-box !important;
     overflow: hidden !important;
     border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
   }
 
-  .cert-table,
+  .table-responsive-container {
+    margin-bottom: 6px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
   .annexure-table,
   .battery-serial-table,
+  .cert-table,
   .contractor-table {
     width: 100% !important;
+    min-width: 580px !important;
+    font-size: 8.5pt !important;
+  }
+
+  .p4-metadata-table {
+    width: 100% !important;
     min-width: 100% !important;
-    max-width: 100% !important;
     font-size: 8pt !important;
-    table-layout: fixed !important;
-    word-break: break-word;
   }
 
   .cert-table td,
   .annexure-table td,
   .contractor-table td {
-    padding: 3px 4px !important;
+    padding: 4px 6px !important;
   }
 
   .field-inline-row {
     flex-direction: column;
     align-items: flex-start;
-    gap: 1px;
+    gap: 2px;
     height: auto;
+    margin-bottom: 4px;
   }
 
   .field-label {
-    font-size: 8pt;
+    font-size: 8.5pt;
     margin-right: 0;
+    font-weight: 700;
   }
 
   .field-content {
@@ -1046,9 +1065,15 @@
   }
 
   .doc-input, .doc-textarea, .cust-ui-input, .cust-ui-textarea {
-    font-size: 8pt !important;
-    padding: 2px 4px !important;
+    font-size: 9pt !important;
+    padding: 4px 6px !important;
+    min-height: 28px;
     width: 100% !important;
+  }
+
+  .doc-system-type-wrap {
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   .doc-header-inner {
@@ -1060,18 +1085,19 @@
   }
 
   .doc-brand-logo-wrap {
-    height: 32px !important;
+    height: 36px !important;
   }
 
   .doc-brand-logo {
-    height: 30px !important;
-    max-width: 130px !important;
+    height: 32px !important;
+    max-width: 140px !important;
   }
 
   .tata-brand-heading {
     font-size: 11pt !important;
     text-align: center !important;
-    white-space: nowrap !important;
+    white-space: normal !important;
+    line-height: 1.2 !important;
   }
 
   .tata-brand-address {
@@ -1081,18 +1107,18 @@
   }
 
   .p1-title, .p2-title, .p3-main-heading {
-    font-size: 10pt !important;
-    margin: 4px 0 !important;
+    font-size: 10.5pt !important;
+    margin: 6px 0 !important;
   }
 
   .p1-cert-paragraph {
-    font-size: 8pt !important;
-    line-height: 1.25 !important;
+    font-size: 8.5pt !important;
+    line-height: 1.35 !important;
   }
 
   .cust-inline-grid {
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
   }
 
   .p2-intro-row {
@@ -1123,6 +1149,19 @@
     height: auto !important;
     min-height: 110px !important;
     padding: 4px !important;
+  }
+
+  .page4-selfie-frame-500,
+  .page4-selfie-img-500 {
+    width: 100% !important;
+    max-width: 320px !important;
+    height: auto !important;
+    aspect-ratio: 1 / 1 !important;
+  }
+
+  .p4-signatures-row {
+    flex-direction: column;
+    gap: 12px;
   }
 }
 

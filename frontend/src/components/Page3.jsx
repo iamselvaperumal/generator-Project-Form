@@ -171,7 +171,8 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
 
         {/* Section 1.1: Grid Parameters */}
         <div className="p3-subheading">1.1 Grid Parameters:</div>
-        <table className="annexure-table" style={{ marginBottom: '4px' }}>
+        <div className="table-responsive-container">
+          <table className="annexure-table" style={{ marginBottom: '4px' }}>
           <thead>
             <tr>
               <th style={{ width: '38%', textAlign: 'left', paddingLeft: '6px' }}>Description</th>
@@ -231,10 +232,12 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
             </tr>
           </tbody>
         </table>
+        </div>
 
         {/* Section 1.2: Generation data */}
         <div className="p3-subheading">1.2 Generation data - ACDB / LT Panel</div>
-        <table className="annexure-table" style={{ marginBottom: '2px' }}>
+        <div className="table-responsive-container">
+          <table className="annexure-table" style={{ marginBottom: '2px' }}>
           <thead>
             <tr>
               <th style={{ width: '38%', textAlign: 'left', paddingLeft: '6px' }}>Description</th>
@@ -376,6 +379,7 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
             </tr>
           </tbody>
         </table>
+        </div>
         <div style={{ fontSize: '8pt', marginBottom: '4px' }}>*Note: Minimum 3 hours & Above</div>
 
         {/* Section: Based on (Solar log) */}
@@ -385,7 +389,8 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
         </div>
 
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table" style={{ marginBottom: '4px' }}>
+          <div className="table-responsive-container">
+            <table className="annexure-table" style={{ marginBottom: '4px' }}>
             <thead>
               <tr>
                 <th style={{ width: '13%', lineHeight: '1.15' }}>Solar Log<br />Nos</th>
@@ -498,6 +503,7 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -532,7 +538,8 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
         </div>
 
         {/* Section: Contractor Information & Signatures */}
-        <table className="contractor-table">
+        <div className="table-responsive-container">
+          <table className="contractor-table">
           <tbody>
             <tr>
               <td style={{ width: '50%', height: '52px' }}>
@@ -652,6 +659,7 @@ export default function Page3({ formData, onChange, readOnly = false, onOpenSign
             </tr>
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="page-doc-footer">

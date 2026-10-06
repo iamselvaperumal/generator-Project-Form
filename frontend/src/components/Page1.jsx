@@ -74,7 +74,7 @@ export default function Page1({
           satisfaction.
         </div>
 
-        <div className="a4-page-scroll-wrap">
+        <div className="table-responsive-container">
           <table className="cert-table">
           <tbody>
             {/* Row 1: Start date of I&C | End date of I&C */}

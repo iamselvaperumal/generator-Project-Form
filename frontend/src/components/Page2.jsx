@@ -98,7 +98,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Table 1: Solar Module Make */}
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table">
+          <div className="table-responsive-container">
+            <table className="annexure-table">
             <thead>
               <tr>
                 <th style={{ width: '40%' }}>Solar Module Make</th>
@@ -151,6 +152,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -166,7 +168,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Table 2: Solar Power conditioning Units Make */}
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table">
+          <div className="table-responsive-container">
+            <table className="annexure-table">
             <thead>
               <tr>
                 <th style={{ width: '30%', lineHeight: '1.15' }}>
@@ -235,6 +238,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -250,7 +254,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Table 3: Solar Log Make */}
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table">
+          <div className="table-responsive-container">
+            <table className="annexure-table">
             <thead>
               <tr>
                 <th style={{ width: '30%' }}>Solar Log Make</th>
@@ -315,6 +320,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -330,7 +336,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Table 4: ACDB Make */}
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table">
+          <div className="table-responsive-container">
+            <table className="annexure-table">
             <thead>
               <tr>
                 <th style={{ width: '30%' }}>ACDB Make</th>
@@ -395,6 +402,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -410,7 +418,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Table 5: Batteries Make */}
         <div style={{ position: 'relative' }}>
-          <table className="annexure-table">
+          <div className="table-responsive-container">
+            <table className="annexure-table">
             <thead>
               <tr>
                 <th style={{ width: '25%' }}>Batteries Make</th>
@@ -475,6 +484,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
               ))}
             </tbody>
           </table>
+          </div>
           {!readOnly && (
             <div className="table-action-bar no-print">
               <button
@@ -490,7 +500,8 @@ export default function Page2({ formData, onChange, readOnly = false }) {
 
         {/* Battery Serial Numbers Grid */}
         <div style={{ fontSize: '9pt', margin: '4px 0 2px 0' }}>Batteries Serial Nos.:</div>
-        <table className="battery-serial-table">
+        <div className="table-responsive-container">
+          <table className="battery-serial-table">
           <tbody>
             {[0, 1, 2, 3, 4].map((rowIndex) => (
               <tr key={rowIndex}>
@@ -519,6 +530,7 @@ export default function Page2({ formData, onChange, readOnly = false }) {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       <div className="page-doc-footer">

@@ -1198,7 +1198,7 @@
   }
 
   .admin-login-card {
-    padding: 28px 20px;
+    padding: 24px 16px;
     border-radius: 16px;
   }
 
@@ -1212,20 +1212,62 @@
     justify-content: space-between;
   }
 
+  .admin-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+
+  .admin-table-controls {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+
+  .admin-filter-box select {
+    width: 100%;
+  }
+
   .admin-data-table th,
   .admin-data-table td {
-    padding: 10px 12px;
-    font-size: 12px;
+    padding: 10px 10px;
+    font-size: 11.5px;
+  }
+
+  .admin-review-overlay {
+    padding: 0;
+  }
+
+  .admin-review-modal {
+    width: 100vw;
+    height: 100vh;
+    max-height: 100vh;
+    border-radius: 0;
   }
 
   .admin-modal-header {
     flex-direction: column;
     align-items: flex-start;
     gap: 8px;
+    padding: 12px 14px;
   }
 
   .header-actions {
     width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .review-tabs-bar {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 8px;
+  }
+
+  .review-tab {
+    white-space: nowrap;
+    padding: 10px 10px;
+    font-size: 12px;
   }
 }
