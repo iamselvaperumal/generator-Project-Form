@@ -21,6 +21,7 @@ import Page2 from '../Page2';
 import Page3 from '../Page3';
 import Page4 from '../Page4';
 import '../../admin.css';
+import { getApiUrl } from '../../utils/apiConfig';
 
 export default function AdminReviewModal({
   application,
@@ -69,7 +70,7 @@ export default function AdminReviewModal({
     setSuccessMsg('');
 
     try {
-      const res = await fetch(`/api/applications/${application.applicationId}/status`, {
+      const res = await fetch(getApiUrl(`/api/applications/${application.applicationId}/status`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

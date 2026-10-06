@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Lock, User, ShieldCheck, ArrowRight, AlertCircle } from 'lucide-react';
 import brandLogo from '../../assets/brand-logo.png';
 import '../../admin.css';
+import { getApiUrl } from '../../utils/apiConfig';
 
 export default function AdminLogin({ onLoginSuccess }) {
   const [username, setUsername] = useState('admin');
@@ -20,7 +21,7 @@ export default function AdminLogin({ onLoginSuccess }) {
     setError('');
 
     try {
-      const res = await fetch('/api/admin/login', {
+      const res = await fetch(getApiUrl('/api/admin/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

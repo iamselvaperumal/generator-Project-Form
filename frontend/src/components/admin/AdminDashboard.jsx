@@ -12,6 +12,7 @@ import {
   FileCheck
 } from 'lucide-react';
 import '../../admin.css';
+import { getApiUrl } from '../../utils/apiConfig';
 
 export default function AdminDashboard({ adminUser, onLogout, onViewApplication }) {
   const [applications, setApplications] = useState([]);
@@ -23,7 +24,7 @@ export default function AdminDashboard({ adminUser, onLogout, onViewApplication 
   const fetchApplications = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/applications');
+      const res = await fetch(getApiUrl('/api/applications'));
       if (res.ok) {
         const data = await res.json();
         setApplications(data.applications || []);

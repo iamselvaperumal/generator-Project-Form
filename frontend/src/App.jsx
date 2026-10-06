@@ -20,6 +20,7 @@ import AdminReviewModal from './components/admin/AdminReviewModal';
 import SignaturePadModal from './components/SignaturePadModal';
 import SelfieGeoModal from './components/SelfieGeoModal';
 import { downloadFixedPdf } from './utils/pdfExport';
+import { getApiUrl } from './utils/apiConfig';
 
 export default function App() {
   const navigate = useNavigate();
@@ -239,7 +240,7 @@ export default function App() {
     try {
       if (editingAppId) {
         // Resubmission of reassigned application (Step 2 Edit & Resubmit flow)
-        const res = await fetch(`/api/applications/${editingAppId}`, {
+        const res = await fetch(getApiUrl(`/api/applications/${editingAppId}`), {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ formData, uploadedFiles })
@@ -261,7 +262,7 @@ export default function App() {
         }
       } else {
         // New application submission
-        const res = await fetch('/api/applications', {
+        const res = await fetch(getApiUrl('/api/applications'), {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ formData, uploadedFiles })

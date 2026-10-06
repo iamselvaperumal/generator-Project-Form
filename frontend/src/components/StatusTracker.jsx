@@ -17,6 +17,7 @@ import {
   RotateCcw,
   Download
 } from 'lucide-react';
+import { getApiUrl } from '../utils/apiConfig';
 
 export default function StatusTracker({
   currentAppId = '',
@@ -69,7 +70,7 @@ export default function StatusTracker({
 
     try {
       // Try API first
-      const res = await fetch(`/api/applications/${targetId}?email=${encodeURIComponent(targetEmail)}`);
+      const res = await fetch(getApiUrl(`/api/applications/${targetId}?email=${encodeURIComponent(targetEmail)}`));
       if (res.ok) {
         const data = await res.json();
         const appRecord = data.application;
@@ -172,7 +173,7 @@ export default function StatusTracker({
     }
 
     try {
-      const res = await fetch(`/api/applications/${application.applicationId}/status`, {
+      const res = await fetch(getApiUrl(`/api/applications/${application.applicationId}/status`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

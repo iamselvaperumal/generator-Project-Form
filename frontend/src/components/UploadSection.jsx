@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { UploadCloud, FileText, Trash2, CheckCircle2, AlertCircle, FileCheck } from 'lucide-react';
+import { getApiUrl } from '../utils/apiConfig';
 
 export default function UploadSection({ uploadedFiles = [], onFilesChange, isOpen, onClose }) {
   const [uploading, setUploading] = useState(false);
@@ -21,7 +22,7 @@ export default function UploadSection({ uploadedFiles = [], onFilesChange, isOpe
       });
 
       // Try uploading to backend API
-      const res = await fetch('/api/upload', {
+      const res = await fetch(getApiUrl('/api/upload'), {
         method: 'POST',
         body: formData,
       });
