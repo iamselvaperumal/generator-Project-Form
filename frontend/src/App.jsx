@@ -418,6 +418,46 @@ export default function App() {
           path="/form"
           element={
             <main className="form-pages-container">
+              {/* Desktop Quick Page Jump Bar */}
+              <div className="form-desktop-header-bar no-print">
+                <div className="form-bar-title">
+                  <span className="page-count-chip">4-Page Certificate Editor</span>
+                  <span style={{ color: '#94a3b8', fontSize: '13px' }}>
+                    {formData.customerName ? `Client: ${formData.customerName}` : 'Fill installation details below'}
+                  </span>
+                </div>
+                <div className="form-bar-nav-buttons">
+                  <button
+                    type="button"
+                    className="btn-form-nav-chip"
+                    onClick={() => document.getElementById('page-1')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    Page 1: Customer Details
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-form-nav-chip"
+                    onClick={() => document.getElementById('page-2')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    Page 2: Equipment Specs
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-form-nav-chip"
+                    onClick={() => document.getElementById('page-3')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    Page 3: Sign-Off
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-form-nav-chip"
+                    onClick={() => document.getElementById('page-4')?.scrollIntoView({ behavior: 'smooth' })}
+                  >
+                    Page 4: Geo Selfie
+                  </button>
+                </div>
+              </div>
+
               <Page1
                 formData={formData}
                 onChange={handleFieldChange}

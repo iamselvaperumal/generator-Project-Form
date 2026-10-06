@@ -1330,3 +1330,118 @@
   color: #000000;
 }
 
+/* =========================================================
+   FORM PAGES CONTAINER & DESKTOP CENTERED ENHANCED VIEW
+   ========================================================= */
+.form-pages-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-height: 100vh;
+  padding: 30px 15px 100px 15px;
+  gap: 36px;
+  box-sizing: border-box;
+}
+
+.form-desktop-header-bar {
+  width: 100%;
+  max-width: 960px;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: 14px;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  margin-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.form-bar-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.page-count-chip {
+  font-size: 11px;
+  font-weight: 800;
+  color: #38bdf8;
+  background: rgba(56, 189, 248, 0.15);
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.form-bar-nav-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-form-nav-chip {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #cbd5e1;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-form-nav-chip:hover {
+  background: #0ea5e9;
+  color: #ffffff;
+  border-color: #38bdf8;
+  transform: translateY(-1px);
+}
+
+/* DESKTOP VIEW SPECIFIC ENLARGEMENT & CENTERING */
+@media (min-width: 1025px) {
+  .form-pages-container {
+    padding: 40px 20px 180px 20px;
+    gap: 60px;
+    align-items: center;
+  }
+
+  .form-pages-container .a4-page {
+    transform: scale(1.16);
+    transform-origin: top center;
+    margin-bottom: 55px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(255, 255, 255, 0.2);
+  }
+
+  .form-pages-container .a4-page:hover {
+    transform: scale(1.18) translateY(-4px);
+    box-shadow: 0 36px 90px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(56, 189, 248, 0.4);
+  }
+}
+
+@media (min-width: 1440px) {
+  .form-pages-container {
+    padding: 50px 20px 220px 20px;
+    gap: 80px;
+    align-items: center;
+  }
+
+  .form-pages-container .a4-page {
+    transform: scale(1.24);
+    transform-origin: top center;
+    margin-bottom: 75px;
+  }
+
+  .form-pages-container .a4-page:hover {
+    transform: scale(1.26) translateY(-4px);
+  }
+}
+
+
