@@ -71,8 +71,8 @@ export default function Navbar({
             onClick={() => navigate('/form')}
             title="Installation & Commissioning Certificate Form (3 Pages)"
           >
-            <FileText size={14} />
-            <span>Form (3 Pages)</span>
+            <FileText size={15} />
+            <span>Form</span>
           </button>
           <button
             type="button"
@@ -80,8 +80,8 @@ export default function Navbar({
             onClick={() => navigate('/status')}
             title="Check Application Submission Status"
           >
-            <Search size={14} />
-            <span>Check Status</span>
+            <Search size={15} />
+            <span>Status</span>
           </button>
           <button
             type="button"
@@ -89,8 +89,8 @@ export default function Navbar({
             onClick={() => navigate(adminUser ? '/admin' : '/admin/login')}
             title="Official Staff Admin Review Portal"
           >
-            <ShieldCheck size={14} className="admin-icon-glow" />
-            <span className="admin-tab-text">Admin Portal</span>
+            <ShieldCheck size={15} className="admin-icon-glow" />
+            <span className="admin-tab-text">Admin</span>
             <span className="admin-chip-tag">STAFF</span>
           </button>
         </div>
@@ -105,18 +105,18 @@ export default function Navbar({
                 onClick={onFillSample}
                 title="Populate form with complete real-world sample commissioning data"
               >
-                <Sparkles size={13} className="sparkle-icon" />
-                <span>Sample</span>
+                <Sparkles size={15} className="sparkle-icon" />
+                <span className="nav-btn-text">Sample</span>
               </button>
 
               <button
                 type="button"
-                className="btn-nav-outline"
+                className="btn-nav-outline btn-files-nav"
                 onClick={onOpenUploads}
                 title="Attach drawings, reports, single line diagram, etc."
               >
-                <Upload size={13} />
-                <span>Files</span>
+                <Upload size={15} />
+                <span className="nav-btn-text">Files</span>
                 {uploadedFilesCount > 0 && (
                   <span className="file-count-badge">{uploadedFilesCount}</span>
                 )}
@@ -124,22 +124,22 @@ export default function Navbar({
 
               <button
                 type="button"
-                className="btn-nav-outline"
+                className="btn-nav-outline btn-print-nav"
                 onClick={onPrint}
                 title="Print or export current certificate as high-resolution PDF"
               >
-                <Printer size={13} />
-                <span>Print</span>
+                <Printer size={15} />
+                <span className="nav-btn-text">Print</span>
               </button>
 
               <button
                 type="button"
                 className="btn-nav-dev-pdf"
                 onClick={onOpenDevPdfPreview}
-                title="Test & Development Purpose: Download and inspect the actual fixed layout PDF with filled data"
+                title="Download and inspect PDF with filled data"
               >
-                <Download size={13} />
-                <span>Download PDF</span>
+                <Download size={15} />
+                <span className="nav-btn-text">Download PDF</span>
                 <span className="dev-pill-nav">TEST/DEV</span>
               </button>
 
@@ -150,8 +150,8 @@ export default function Navbar({
                 disabled={submitting}
                 title={editingAppId ? 'Resubmit application with updated details' : 'Submit application to Admin for verification'}
               >
-                <Send size={13} />
-                <span>{submitting ? 'Submitting...' : editingAppId ? 'Resubmit' : 'Submit Application'}</span>
+                <Send size={15} />
+                <span>{submitting ? 'Submitting...' : editingAppId ? 'Resubmit' : 'Submit'}</span>
               </button>
             </>
           )}
