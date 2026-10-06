@@ -458,15 +458,23 @@ export default function App() {
                 </div>
               </div>
 
-              <Page1
-                formData={formData}
-                onChange={handleFieldChange}
-                onOpenSelfieModal={() => setIsSelfieModalOpen(true)}
-                onOpenSignatureModal={() => setIsSignatureModalOpen(true)}
-              />
-              <Page2 formData={formData} onChange={handleFieldChange} />
-              <Page3 formData={formData} onChange={handleFieldChange} />
-              <Page4 formData={formData} onChange={handleFieldChange} />
+              <div className="page-card-wrapper" id="page-1">
+                <Page1
+                  formData={formData}
+                  onChange={handleFieldChange}
+                  onOpenSelfieModal={() => setIsSelfieModalOpen(true)}
+                  onOpenSignatureModal={() => setIsSignatureModalOpen(true)}
+                />
+              </div>
+              <div className="page-card-wrapper" id="page-2">
+                <Page2 formData={formData} onChange={handleFieldChange} />
+              </div>
+              <div className="page-card-wrapper" id="page-3">
+                <Page3 formData={formData} onChange={handleFieldChange} />
+              </div>
+              <div className="page-card-wrapper" id="page-4">
+                <Page4 formData={formData} onChange={handleFieldChange} />
+              </div>
             </main>
           }
         />
