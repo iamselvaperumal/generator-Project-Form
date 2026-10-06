@@ -5,6 +5,7 @@ import './portal.css';
 import './admin.css';
 
 import { initialFormData, sampleFormData } from './data/initialData';
+import HomeDashboard from './components/HomeDashboard';
 import Page1 from './components/Page1';
 import Page2 from './components/Page2';
 import Page3 from './components/Page3';
@@ -409,35 +410,26 @@ export default function App() {
 
       {/* React Router Separate Page Views */}
       <Routes>
-        {/* Route 1: Form Page (Default & /form) */}
+        {/* Route 0: Welcome Home Dashboard (/) */}
+        <Route path="/" element={<HomeDashboard onFillSample={handleFillSample} />} />
+
+        {/* Route 1: Form Page (/form) */}
         <Route
           path="/form"
           element={
-            <main className="document-container" id="certificate-document-root">
+            <main className="form-pages-container">
               <Page1
                 formData={formData}
                 onChange={handleFieldChange}
-                readOnly={isExportingPdf}
                 onOpenSelfieModal={() => setIsSelfieModalOpen(true)}
                 onOpenSignatureModal={() => setIsSignatureModalOpen(true)}
               />
-              <Page2 formData={formData} onChange={handleFieldChange} readOnly={isExportingPdf} />
-              <Page3
-                formData={formData}
-                onChange={handleFieldChange}
-                readOnly={isExportingPdf}
-                onOpenSignatureModal={() => setIsSignatureModalOpen(true)}
-              />
-              <Page4
-                formData={formData}
-                onChange={handleFieldChange}
-                readOnly={isExportingPdf}
-                onOpenSelfieModal={() => setIsSelfieModalOpen(true)}
-              />
+              <Page2 formData={formData} onChange={handleFieldChange} />
+              <Page3 formData={formData} onChange={handleFieldChange} />
+              <Page4 formData={formData} onChange={handleFieldChange} />
             </main>
           }
         />
-        <Route path="/" element={<Navigate to="/form" replace />} />
 
         {/* Route 2: Status Tracker Page (/status) */}
         <Route

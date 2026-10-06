@@ -1,6 +1,7 @@
 import React from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import {
+  Home,
   FileText,
   Search,
   Printer,
@@ -33,7 +34,8 @@ export default function Navbar({
   const navigate = useNavigate();
 
   const currentPath = location.pathname;
-  const isFormActive = currentPath === '/' || currentPath === '/form';
+  const isHomeActive = currentPath === '/';
+  const isFormActive = currentPath === '/form';
   const isStatusActive = currentPath.startsWith('/status');
   const isAdminActive = currentPath.startsWith('/admin');
 
@@ -46,7 +48,7 @@ export default function Navbar({
     <header className="app-navbar no-print">
       <div className="navbar-inner">
         {/* Left: Brand Identity */}
-        <div className="brand-group" onClick={() => navigate('/form')} style={{ cursor: 'pointer' }}>
+        <div className="brand-group" onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
           <div className="brand-logo-mark" title="Tata Power Renewable Energy">
             <img src={brandLogo} alt="Tata Power Renewable Energy Logo" />
           </div>
@@ -67,9 +69,18 @@ export default function Navbar({
         <div className="nav-tabs">
           <button
             type="button"
+            className={`nav-tab-btn ${isHomeActive ? 'active' : ''}`}
+            onClick={() => navigate('/')}
+            title="Home Dashboard"
+          >
+            <Home size={15} />
+            <span>Home</span>
+          </button>
+          <button
+            type="button"
             className={`nav-tab-btn ${isFormActive ? 'active' : ''}`}
             onClick={() => navigate('/form')}
-            title="Installation & Commissioning Certificate Form (3 Pages)"
+            title="Installation & Commissioning Certificate Form (4 Pages)"
           >
             <FileText size={15} />
             <span>Form</span>

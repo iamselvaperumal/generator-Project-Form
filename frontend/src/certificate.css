@@ -1010,6 +1010,14 @@
   -webkit-overflow-scrolling: touch;
 }
 
+/* On mobile viewports (<= 820px), align to flex-start so the left side of the form is never hidden off-screen */
+@media screen and (max-width: 820px) {
+  .document-container {
+    align-items: flex-start !important;
+    padding: 16px 10px 80px 10px !important;
+  }
+}
+
 /* =========================================================
    PAGE 1 TOP-RIGHT SELFIE WIDGET (FORM VIEW ONLY, NO-PRINT)
    ========================================================= */
