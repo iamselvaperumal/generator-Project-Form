@@ -27,9 +27,21 @@ export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // Clear any legacy localStorage draft/session keys on initial load
+  useEffect(() => {
+    try {
+      localStorage.removeItem('tpre_form_draft');
+      localStorage.removeItem('tpre_uploaded_files');
+      localStorage.removeItem('tpre_admin_user');
+      localStorage.removeItem('tpre_admin_token');
+    } catch (e) {
+      // ignore
+    }
+  }, []);
+
   const [formData, setFormData] = useState(() => {
     try {
-      const saved = localStorage.getItem('tpre_form_draft');
+      const saved = sessionStorage.getItem('tpre_form_draft');
       return saved ? JSON.parse(saved) : initialFormData;
     } catch (e) {
       return initialFormData;
@@ -38,7 +50,7 @@ export default function App() {
 
   const [uploadedFiles, setUploadedFiles] = useState(() => {
     try {
-      const saved = localStorage.getItem('tpre_uploaded_files');
+      const saved = sessionStorage.getItem('tpre_uploaded_files');
       return saved ? JSON.parse(saved) : [];
     } catch (e) {
       return [];
@@ -79,10 +91,10 @@ export default function App() {
     }));
   };
 
-  // Admin Auth & Review State
+  // Admin Auth & Review State (Session storage: expires on tab close)
   const [adminUser, setAdminUser] = useState(() => {
     try {
-      const saved = localStorage.getItem('tpre_admin_user');
+      const saved = sessionStorage.getItem('tpre_admin_user');
       return saved ? JSON.parse(saved) : null;
     } catch (e) {
       return null;
@@ -93,8 +105,8 @@ export default function App() {
   const handleAdminLogin = (userRecord, token) => {
     setAdminUser(userRecord);
     try {
-      localStorage.setItem('tpre_admin_user', JSON.stringify(userRecord));
-      localStorage.setItem('tpre_admin_token', token);
+      sessionStorage.setItem('tpre_admin_user', JSON.stringify(userRecord));
+      sessionStorage.setItem('tpre_admin_token', token);
     } catch (e) {
       // ignore
     }
@@ -104,8 +116,8 @@ export default function App() {
   const handleAdminLogout = () => {
     setAdminUser(null);
     setSelectedAppToReview(null);
-    localStorage.removeItem('tpre_admin_user');
-    localStorage.removeItem('tpre_admin_token');
+    sessionStorage.removeItem('tpre_admin_user');
+    sessionStorage.removeItem('tpre_admin_token');
     navigate('/admin/login');
   };
 
@@ -129,19 +141,19 @@ export default function App() {
     }
   };
 
-  // Auto-save form draft to localStorage
+  // Auto-save form draft to sessionStorage (Expires on tab close)
   useEffect(() => {
     try {
-      localStorage.setItem('tpre_form_draft', JSON.stringify(formData));
+      sessionStorage.setItem('tpre_form_draft', JSON.stringify(formData));
     } catch (e) {
       // ignore
     }
   }, [formData]);
 
-  // Auto-save uploaded files
+  // Auto-save uploaded files to sessionStorage
   useEffect(() => {
     try {
-      localStorage.setItem('tpre_uploaded_files', JSON.stringify(uploadedFiles));
+      sessionStorage.setItem('tpre_uploaded_files', JSON.stringify(uploadedFiles));
     } catch (e) {
       // ignore
     }
@@ -183,8 +195,8 @@ export default function App() {
       setFormData(initialFormData);
       setUploadedFiles([]);
       setEditingAppId(null);
-      localStorage.removeItem('tpre_form_draft');
-      localStorage.removeItem('tpre_uploaded_files');
+      sessionStorage.removeItem('tpre_form_draft');
+      sessionStorage.removeItem('tpre_uploaded_files');
     }
   };
 

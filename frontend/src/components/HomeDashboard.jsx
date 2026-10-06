@@ -97,8 +97,8 @@ export default function HomeDashboard({ onFillSample }) {
         ]);
       }
 
-      // Check for saved draft
-      const storedDraft = localStorage.getItem('tpre_form_draft');
+      // Check for saved draft in current session
+      const storedDraft = sessionStorage.getItem('tpre_form_draft');
       if (storedDraft) {
         const parsed = JSON.parse(storedDraft);
         if (parsed && (parsed.customerName || parsed.soNo || parsed.startDateOfIC)) {
